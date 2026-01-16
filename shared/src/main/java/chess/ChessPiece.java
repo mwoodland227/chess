@@ -53,16 +53,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
 
-    // function name -- How to name the function? -- how does it take an argument?
-    // make an empty list of to add valid moves to - List<
-    // create a loop to check the 8 possible moves of the knight - if statements
-    // check if it is in bounds, empty, friendly, enemy -- passes then add target square
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.KNIGHT) {
            KnightMoves PossibleMoves = new KnightMoves();
            return PossibleMoves.MoveList(myPosition, pieceColor, board);
         }
+
         if (piece.getPieceType() == PieceType.BISHOP) {
             return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1, 8), null));
             // don't hard code this, was just an example.

@@ -3,7 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KnightMoves {
+public class KnightMoves extends MovesCalculator {
 
     public Collection<ChessMove> MoveList(ChessPosition myPosition, ChessGame.TeamColor pieceColor, ChessBoard board) {
         int[][] possibleMoves = {
@@ -16,7 +16,7 @@ public class KnightMoves {
                 {-1, 2},
                 {-1, -2}
         };
-        Collection<ChessMove> availibleMoves = new ArrayList<>();
+        Collection<ChessMove> availableMoves = new ArrayList<>();
 
         for (int[] coordinates : possibleMoves) {
             int row = myPosition.getRow();
@@ -27,22 +27,11 @@ public class KnightMoves {
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             if (inbounds(newPosition)) {
                 if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
-                    availibleMoves.add(new ChessMove(myPosition, newPosition, null));
+                    availableMoves.add(new ChessMove(myPosition, newPosition, null));
                 }
             }
         }
-        return availibleMoves;
+        return availableMoves;
     }
 
-    public ChessGame.TeamColor checkSpace(ChessBoard board, ChessPosition position) {
-        if (board.getPiece(position) != null) {
-            return board.getPiece(position).getTeamColor();
-        }
-        return null;
-    }
-
-    public boolean inbounds(ChessPosition position) {
-        return 1 <= position.getRow() && position.getRow() <= 8
-                && 1 <= position.getColumn() && position.getColumn() <= 8;
-    }
 }
