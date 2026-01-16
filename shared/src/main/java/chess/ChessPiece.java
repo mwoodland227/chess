@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -10,8 +11,12 @@ import java.util.List;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -30,14 +35,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,7 +52,35 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+    // function name -- How to name the function? -- how does it take an argument?
+    // make an empty list of to add valid moves to - List<
+    // create a loop to check the 8 possible moves of the knight - if statements
+    // check if it is in bounds, empty, friendly, enemy -- passes then add target square
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece piece = board.getPiece(myPosition);
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+           KnightMoves PossibleMoves = new KnightMoves();
+           return PossibleMoves.MoveList(myPosition, pieceColor, board);
+        }
+        if (piece.getPieceType() == PieceType.BISHOP) {
+            return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1, 8), null));
+            // don't hard code this, was just an example.
+
+        }        return List.of();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
