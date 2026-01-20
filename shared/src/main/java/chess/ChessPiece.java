@@ -64,6 +64,10 @@ public class ChessPiece {
             KingMoves PossibleMoves = new KingMoves();
             return PossibleMoves.moveList(myPosition, pieceColor, board);
         }
+        if (piece.getPieceType() == PieceType.ROOK) {
+            RookMoves PossibleMoves = new RookMoves();
+            return PossibleMoves.moveList(myPosition, pieceColor, board);
+        }
 
         if (piece.getPieceType() == PieceType.BISHOP) {
             return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1, 8), null));
