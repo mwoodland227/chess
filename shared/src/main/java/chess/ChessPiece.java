@@ -74,8 +74,8 @@ public class ChessPiece {
         }
 
         if (piece.getPieceType() == PieceType.BISHOP) {
-            return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1, 8), null));
-            // don't hard code this, was just an example.
+            BishopMoves possibleMoves = new BishopMoves();
+            return possibleMoves.moveList(myPosition, pieceColor, board);
 
         }        return List.of();
     }
