@@ -16,7 +16,7 @@ public class KingMoves extends MovesCalculator{
                 {1,-1},
                 {1,1}
         };
-        return Collections.singleton(kingKnightMoves(possibleMoves, myPosition, board, pieceColor));
+        return kingKnightMoves(possibleMoves, myPosition, board, pieceColor);
 
 
 //        for (int[] coordinates : possibleMoves){

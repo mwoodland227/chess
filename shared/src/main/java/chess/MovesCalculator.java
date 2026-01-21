@@ -17,7 +17,7 @@ public class MovesCalculator {
                 && 1 <= position.getColumn() && position.getColumn() <= 8;
     }
 
-    public ChessMove kingKnightMoves (int[][]possibleMoves, ChessPosition position, ChessBoard board, ChessGame.TeamColor pieceColor) {
+    public Collection<ChessMove> kingKnightMoves (int[][]possibleMoves, ChessPosition position, ChessBoard board, ChessGame.TeamColor pieceColor) {
         Collection<ChessMove> availableMoves = new ArrayList<>();
 
         for (int[] coordinates : possibleMoves){
@@ -34,6 +34,58 @@ public class MovesCalculator {
                 }
             }
         }
-        return (ChessMove) availableMoves;
+        return availableMoves;
+    }
+
+    public Collection<ChessMove> verticalMoves (ChessPosition position, ChessGame.TeamColor pieceColor, ChessBoard board, int direction) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int row = position.getRow();
+        int col = position.getColumn();
+
+
+        while(true) {
+            int newRow = row + direction;
+            ChessPosition newPosition = new ChessPosition(newRow, col);
+            if (inbounds(newPosition)) {
+                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
+                    moves.add(new ChessMove(position, newPosition, null));
+                    if(checkSpace(board, newPosition) != null) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+            row = row + direction;
+        }
+
+        return moves;
+    }
+
+    public Collection<ChessMove> horizontalMoves (ChessPosition position, ChessGame.TeamColor pieceColor, ChessBoard board, int direction) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int row = position.getRow();
+        int col = position.getColumn();
+
+        while(true) {
+            int newCol = col + direction;
+            ChessPosition newPosition = new ChessPosition(row, newCol);
+            if (inbounds(newPosition)) {
+                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
+                    moves.add(new ChessMove(position, newPosition, null));
+                    if(checkSpace(board, newPosition) != null) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+            col = col + direction;
+        }
+        return moves;
     }
 }
