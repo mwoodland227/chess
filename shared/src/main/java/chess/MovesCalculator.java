@@ -88,4 +88,31 @@ public class MovesCalculator {
         }
         return moves;
     }
+
+    public Collection<ChessMove> diagonalMoves (ChessPosition position, ChessGame.TeamColor pieceColor, ChessBoard board, int rowDirection, int colDirection) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int row = position.getRow();
+        int col = position.getColumn();
+
+        while(true) {
+            int newCol = col + colDirection;
+            int newRow = row + rowDirection;
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            if (inbounds(newPosition)) {
+                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
+                    moves.add(new ChessMove(position, newPosition, null));
+                    if(checkSpace(board, newPosition) != null) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+            col = col + colDirection;
+            row = row + rowDirection;
+        }
+        return moves;
+    }
 }
