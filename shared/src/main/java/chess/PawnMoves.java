@@ -46,9 +46,17 @@ public class PawnMoves extends MovesCalculator{
                 //check square right in front
                 Collection<ChessMove> firstSpace = frontSpace(myPosition, pieceColor, board, -1);
                 possibleMoves.addAll(firstSpace);
-                // check 2 spaces in front
-                Collection<ChessMove> secondSpace = frontSpace(myPosition, pieceColor, board, -2);
-                possibleMoves.addAll(secondSpace);
+                if (firstSpace.toArray().length == 1) {
+                    // check 2 spaces in front
+                    Collection<ChessMove> secondSpace = frontSpace(myPosition, pieceColor, board, -2);
+                    possibleMoves.addAll(secondSpace);
+                }
+
+                Collection<ChessMove> rightDiagonal = checkDiagonals(myPosition, pieceColor, board, -1, 1);
+                possibleMoves.addAll(rightDiagonal);
+
+                Collection<ChessMove> leftDiagonal = checkDiagonals(myPosition, pieceColor, board, -1, -1);
+                possibleMoves.addAll(leftDiagonal);
 
             } else {
                 // check the space directly in front
@@ -69,9 +77,18 @@ public class PawnMoves extends MovesCalculator{
                 //check square right in front
                 Collection<ChessMove> firstSpace = frontSpace(myPosition, pieceColor, board, 1);
                 possibleMoves.addAll(firstSpace);
-                // check 2 spaces in front
-                Collection<ChessMove> secondSpace = frontSpace(myPosition, pieceColor, board, 2);
-                possibleMoves.addAll(secondSpace);
+                if (firstSpace.toArray().length == 1) {
+                    // check 2 spaces in front
+                    Collection<ChessMove> secondSpace = frontSpace(myPosition, pieceColor, board, 2);
+                    possibleMoves.addAll(secondSpace);
+                }
+
+                // check diagonal
+                Collection<ChessMove> rightDiagonal = checkDiagonals(myPosition, pieceColor, board, 1, 1);
+                possibleMoves.addAll(rightDiagonal);
+
+                Collection<ChessMove> leftDiagonal = checkDiagonals(myPosition, pieceColor, board, 1, -1);
+                possibleMoves.addAll(leftDiagonal);
 
             } else {
                 // check the space directly in front
@@ -89,7 +106,8 @@ public class PawnMoves extends MovesCalculator{
 
 
         // promotion
-        ChessPiece.PieceType[] promotions = {ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.ROOK, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT};
+        ChessPiece.PieceType[] promotions = {ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT};
         Collection<ChessMove> promos = new ArrayList<>();
         for (ChessMove move : possibleMoves) {
             if (pieceColor == ChessGame.TeamColor.BLACK) {
@@ -97,14 +115,15 @@ public class PawnMoves extends MovesCalculator{
                 int row = endSpot.getRow();
                 if (row == 1) {
                     for (ChessPiece.PieceType promote : promotions) {
-                        promos.add(new ChessMove(myPosition, myPosition, promote));
+                        promos.add(new ChessMove(myPosition, endSpot, promote));
                     }
                 }
             } else {
-                int row = move.getEndPosition().getRow();
+                ChessPosition endSpot = move.getEndPosition();
+                int row = endSpot.getRow();
                 if (row == 8) {
                     for (ChessPiece.PieceType promote : promotions) {
-                        promos.add(new ChessMove(myPosition, myPosition, promote));
+                        promos.add(new ChessMove(myPosition, endSpot, promote));
                     }
                 }
             }
@@ -112,7 +131,8 @@ public class PawnMoves extends MovesCalculator{
 
         possibleMoves.addAll(promos);
 
-
+        possibleMoves.removeIf(moves -> moves.getPromotionPiece() == null &&
+                (moves.getEndPosition().getRow() == 1 || moves.getEndPosition().getRow() == 8));
 
         return possibleMoves;
     }
