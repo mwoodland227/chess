@@ -72,7 +72,10 @@ public class ChessPiece {
             QueenMoves possibleMoves = new QueenMoves();
             return possibleMoves.moveList(myPosition, pieceColor, board);
         }
-
+        if (piece.getPieceType() == PieceType.PAWN) {
+            PawnMoves possibleMoves = new PawnMoves();
+            return possibleMoves.movesList(myPosition, pieceColor, board);
+        }
         if (piece.getPieceType() == PieceType.BISHOP) {
             BishopMoves possibleMoves = new BishopMoves();
             return possibleMoves.moveList(myPosition, pieceColor, board);

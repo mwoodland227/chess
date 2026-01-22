@@ -42,7 +42,14 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <=8; col++) {
+                if (row == 1) {
+                    
+                }
+            }
+        }
     }
 
     @Override
