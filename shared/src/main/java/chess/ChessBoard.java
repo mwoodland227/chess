@@ -45,8 +45,47 @@ public class ChessBoard {
 
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <=8; col++) {
+                //Whites
                 if (row == 1) {
-                    
+                    if (col == 1 || col == 8) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE ,ChessPiece.PieceType.ROOK));
+                    }
+                    if (col == 2 || col == 7) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE ,ChessPiece.PieceType.KNIGHT));
+                    }
+                    if (col == 3 || col == 6) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE ,ChessPiece.PieceType.BISHOP));
+                    }
+                    if (col == 4) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE ,ChessPiece.PieceType.QUEEN));
+                    }
+                    if (col == 5) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE ,ChessPiece.PieceType.KING));
+                    }
+                }
+                if (row == 2) {
+                    addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+                }
+                //blacks
+                if (row == 8) {
+                    if (col == 1 || col == 8) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK ,ChessPiece.PieceType.ROOK));
+                    }
+                    if (col == 2 || col == 7) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK ,ChessPiece.PieceType.KNIGHT));
+                    }
+                    if (col == 3 || col == 6) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK ,ChessPiece.PieceType.BISHOP));
+                    }
+                    if (col == 4) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK ,ChessPiece.PieceType.QUEEN));
+                    }
+                    if (col == 5) {
+                        addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK ,ChessPiece.PieceType.KING));
+                    }
+                }
+                if (row == 7) {
+                    addPiece(new ChessPosition(row, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
                 }
             }
         }
