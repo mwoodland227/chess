@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -103,5 +104,20 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Object o = super.clone();
+        ChessBoard cloneSquares = new ChessBoard();
+
+        for(int row = 1; row <=8; row ++) {
+            for(int col = 1; col <=8; col++){
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = getPiece(position);
+                cloneSquares.addPiece(position, piece);
+            }
+        }
+        return cloneSquares;
     }
 }

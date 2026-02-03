@@ -38,6 +38,7 @@ public class ChessPosition {
         return String.format("[%d,%d]", row, col);
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
