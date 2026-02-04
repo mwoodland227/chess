@@ -108,7 +108,6 @@ public class ChessBoard {
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        Object o = super.clone();
         ChessBoard cloneSquares = new ChessBoard();
 
         for(int row = 1; row <=8; row ++) {
