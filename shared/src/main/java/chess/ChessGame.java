@@ -96,17 +96,23 @@ public class ChessGame {
             if(valid.equals(move)) {
                 ChessPiece piece = board.getPiece(startPosition);
                 TeamColor playerColor = piece.getTeamColor();
-
+                TeamColor opponetColor;
+                if(playerColor != TeamColor.WHITE) {
+                    opponetColor = TeamColor.WHITE;
+                } else {
+                    opponetColor = TeamColor.BLACK;
+                }
 
                 ChessPosition endPosition = move.getEndPosition();
                 ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
                 ChessPiece promotion = new ChessPiece(piece.getTeamColor(), promotionPiece);
                 if(promotionPiece != null){
-                    board.addPiece(endPosition, piece);
-                } else {
                     board.addPiece(endPosition, promotion);
+                } else {
+                    board.addPiece(endPosition, piece);
                 }
                 board.addPiece(startPosition, null);
+                currentTurn = opponetColor;
                 return;
             }
         }
