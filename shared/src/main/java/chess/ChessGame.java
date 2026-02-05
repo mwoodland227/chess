@@ -199,8 +199,9 @@ public class ChessGame {
                     }
                 }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -211,6 +212,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        Collection<ChessMove> anyMoves = new ArrayList<>();
         if(!isInCheck(teamColor)){
             for(int row = 1; row <= 8; row++) {
                 for(int col = 1; col <= 8; col++){
@@ -220,15 +222,19 @@ public class ChessGame {
                         TeamColor color = piece.getTeamColor();
                         if(color == teamColor) {
                             Collection<ChessMove> moves = validMoves(position);
-                            if(moves.toArray().length != 0) {
-                                return true;
-                            }
+                            anyMoves.addAll(moves);
+
                         }
                     }
                 }
             }
+            if(anyMoves.toArray().length == 0) {
+                return true;
+            }
 
         }
+
+
         return false;
     }
 
