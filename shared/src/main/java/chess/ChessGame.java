@@ -125,6 +125,7 @@ public class ChessGame {
                 return;
             }
         }
+        // update what team's turn it is?
 
         throw new InvalidMoveException("Invalid move");
 
@@ -192,14 +193,14 @@ public class ChessGame {
                         if(color == teamColor) {
                             Collection<ChessMove> moves = validMoves(position);
                             if(moves.toArray().length != 0) {
-                                return true;
+                                return false;
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -210,7 +211,25 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(!isInCheck(teamColor)){
+            for(int row = 1; row <= 8; row++) {
+                for(int col = 1; col <= 8; col++){
+                    ChessPosition position = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(position);
+                    if(piece != null) {
+                        TeamColor color = piece.getTeamColor();
+                        if(color == teamColor) {
+                            Collection<ChessMove> moves = validMoves(position);
+                            if(moves.toArray().length != 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return false;
     }
 
     /**
