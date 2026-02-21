@@ -1,10 +1,13 @@
 package dataaccess;
 
+import dataClasses.AuthData;
 import dataClasses.UserData;
 
 public interface UserDAO {
     UserData getUser(String username);
 
-    Void createUser(UserData userData);
+    void createUser(UserData userData);
+
+    void createAuth(AuthData authData);
 
 }
