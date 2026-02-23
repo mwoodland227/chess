@@ -5,14 +5,15 @@ import dataClasses.UserData;
 
 import dataaccess.UserDAO;
 import handler.RegisterRequest;
+import handler.LoginRequest;
 
 import java.util.UUID;
 
 
-public class Register {
+public class User {
     private final UserDAO userDAO;
 
-    public Register(UserDAO userDAO) {
+    public User(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
@@ -30,6 +31,10 @@ public class Register {
         userDAO.createAuth(authData);
 
         return authData;
+    }
+
+    public AuthData login(LoginRequest loginRequest){
+        userDAO.getUser(loginRequest.username());
     }
 
 

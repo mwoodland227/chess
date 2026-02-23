@@ -24,6 +24,8 @@ public class Server {
 
         javalin.post("/user", handle::handleRegister);
 
+        javalin.post("/session", handle::handleLogin);
+
     }
 
     public int run(int desiredPort) {
