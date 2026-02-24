@@ -44,7 +44,9 @@ public class User {
     }
 
 
-    public AuthData logout(LogoutRequest logoutRequest) {
+    public void logout(LogoutRequest logoutRequest) {
         userDAO.getAuth(logoutRequest.authToken());
+        userDAO.deleteAuth(logoutRequest.authToken());
+
     }
 }

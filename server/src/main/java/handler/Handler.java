@@ -28,8 +28,8 @@ public class Handler {
     }
 
     public void handleLogout(Context ctx) {
-        LogoutRequest logoutRequest = new Gson().fromJson(ctx.body(), LogoutRequest.class);
-        AuthData logoutResult = user.logout(logoutRequest);
+        LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
+        user.logout(logoutRequest);
 
     }
 }
