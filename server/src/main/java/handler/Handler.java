@@ -4,7 +4,6 @@ import dataClasses.AuthData;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
-import service.Login;
 import service.User;
 
 public class Handler {
@@ -24,5 +23,13 @@ public class Handler {
     public void handleLogin(Context ctx) {
         LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
         AuthData loginResult = user.login(loginRequest);
+        ctx.result(new Gson().toJson(loginResult));
+        ctx.status(200);
+    }
+
+    public void handleLogout(Context ctx) {
+        LogoutRequest logoutRequest = new Gson().fromJson(ctx.body(), LogoutRequest.class);
+        AuthData logoutResult = user.logout(logoutRequest);
+
     }
 }

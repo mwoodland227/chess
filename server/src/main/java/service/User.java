@@ -4,6 +4,7 @@ import dataClasses.AuthData;
 import dataClasses.UserData;
 
 import dataaccess.UserDAO;
+import handler.LogoutRequest;
 import handler.RegisterRequest;
 import handler.LoginRequest;
 
@@ -21,6 +22,7 @@ public class User {
         return UUID.randomUUID().toString();
     }
 
+
     public AuthData register(RegisterRequest registerRequest) {
         userDAO.getUser(registerRequest.username());
 
@@ -35,7 +37,14 @@ public class User {
 
     public AuthData login(LoginRequest loginRequest){
         userDAO.getUser(loginRequest.username());
+
+        AuthData authData = new AuthData(generateToken(), loginRequest.username());
+        userDAO.createAuth(authData);
+        return authData;
     }
 
 
+    public AuthData logout(LogoutRequest logoutRequest) {
+        userDAO.getAuth(logoutRequest.authToken());
+    }
 }

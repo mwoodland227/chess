@@ -23,4 +23,9 @@ public class MemoryUser implements UserDAO {
     public void createAuth(AuthData authData) {
         authDatabase.put(authData.username(), authData);
     }
+
+    @Override
+    public AuthData getAuth(String authToken) {
+        return authDatabase.get(authToken);
+    }
 }

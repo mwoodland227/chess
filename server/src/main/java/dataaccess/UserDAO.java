@@ -10,4 +10,6 @@ public interface UserDAO {
 
     void createAuth(AuthData authData);
 
+    AuthData getAuth(String authToken);
+
 }

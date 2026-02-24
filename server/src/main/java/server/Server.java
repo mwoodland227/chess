@@ -26,6 +26,8 @@ public class Server {
 
         javalin.post("/session", handle::handleLogin);
 
+        javalin.delete("/session", handle::handleLogout);
+
     }
 
     public int run(int desiredPort) {
