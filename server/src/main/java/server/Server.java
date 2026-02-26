@@ -22,10 +22,6 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        javalin.delete("/db", ctx -> {
-            ctx.status(200).result("{}");
-        });
-
         javalin.post("/user", handle::handleRegister);
 
         javalin.post("/session", handle::handleLogin);
@@ -35,6 +31,10 @@ public class Server {
         javalin.get("/game", handle::handleListGames);
 
         javalin.post("/game", handle::handleCreateGame);
+
+        javalin.delete("/db", handle::handleClear);
+
+        javalin.put("/game", handle::handleJoinGame);
 
     }
 

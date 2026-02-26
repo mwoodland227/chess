@@ -39,7 +39,8 @@ public class Handler {
     public void handleLogout(Context ctx) {
         LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
         user.logout(logoutRequest);
-
+        ctx.result("{}");
+        ctx.status(200);
     }
 
     public void handleListGames(Context ctx) {
@@ -56,5 +57,18 @@ public class Handler {
         int id = game.createGame(authToken, createGameRequest.gameName());
 
         ctx.result(new Gson().toJson(Map.of("gameID", id)));
+    }
+
+    public void handleClear(Context ctx) {
+        user.clearUsers();
+        user.clearAuth();
+        game.clearGames();
+        ctx.result("{}");
+        ctx.status(200);
+    }
+
+    public void handleJoinGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+
     }
 }

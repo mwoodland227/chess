@@ -10,4 +10,5 @@ public interface GameDAO {
 
     int createGame(GameData gameData);
 
+    void clearGames();
 }

@@ -53,6 +53,11 @@ public class User {
     }
 
 
+    public void clearUsers() {
+        userDAO.clearUsers();
+    }
 
-
+    public void clearAuth() {
+        userDAO.clearAuth();
+    }
 }

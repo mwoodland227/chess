@@ -17,6 +17,10 @@ public interface UserDAO {
 
     void deleteAuth(String authToken);
 
+    void clearUsers();
+
+    void clearAuth();
+
 //    Collection<GameData> listGames();
 //
 //    int createGame(GameData gameData);

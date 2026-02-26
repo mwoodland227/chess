@@ -33,4 +33,8 @@ public class Game {
         gameID = gameID +1;
         return id;
     }
+
+    public void clearGames() {
+        gameDAO.clearGames();
+    }
 }

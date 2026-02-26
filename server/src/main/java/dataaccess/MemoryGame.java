@@ -22,4 +22,9 @@ public class MemoryGame implements GameDAO{
         gameDatabase.put(gameID, gameData);
         return gameID;
     }
+
+    @Override
+    public void clearGames() {
+        gameDatabase.clear();
+    }
 }

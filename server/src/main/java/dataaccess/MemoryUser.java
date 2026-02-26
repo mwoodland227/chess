@@ -37,6 +37,16 @@ public class MemoryUser implements UserDAO {
         authDatabase.remove(authToken);
     }
 
+    @Override
+    public void clearUsers() {
+        userDatabase.clear();
+    }
+
+    @Override
+    public void clearAuth() {
+        authDatabase.clear();
+    }
+
 //    @Override
 //    public Collection<GameData> listGames() {
 //        return gameDatabase.values();
