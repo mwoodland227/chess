@@ -45,4 +45,12 @@ public class Handler {
         ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
         ctx.status(200);
     }
+
+    public void handleCreateGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+        CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+        int id = user.createGame(authToken, createGameRequest.gameName());
+
+        ctx.result(new Gson().toJson(Map.of("gameID", id)));
+    }
 }

@@ -1,14 +1,12 @@
 package service;
 
+import chess.ChessGame;
 import dataClasses.AuthData;
 import dataClasses.GameData;
 import dataClasses.UserData;
 
 import dataaccess.UserDAO;
-import handler.ListGamesRequest;
-import handler.LogoutRequest;
-import handler.RegisterRequest;
-import handler.LoginRequest;
+import handler.*;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -55,6 +53,15 @@ public class User {
 
     public Collection<GameData> listGames(ListGamesRequest listGamesRequest) {
         AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
-        return userDAO.listGames(authData);
+        return userDAO.listGames();
+    }
+
+    public int createGame(String authToken, String gameName) {
+        AuthData authData = userDAO.getAuth(authToken);
+        int gameID = 1;
+        int id = userDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
+        gameID = gameID +1;
+
+        return id;
     }
 }

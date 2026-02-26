@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class MemoryUser implements UserDAO {
     final private HashMap<String, UserData> userDatabase = new HashMap<>();
     final private HashMap<String, AuthData> authDatabase = new HashMap<>();
-    final private HashMap<AuthData, GameData> gameDatabase = new HashMap<>();
+    final private HashMap<Integer, GameData> gameDatabase = new HashMap<>();
 
     @Override
     public UserData getUser(String username) {
@@ -38,8 +38,15 @@ public class MemoryUser implements UserDAO {
     }
 
     @Override
-    public Collection<GameData> listGames(AuthData authData) {
+    public Collection<GameData> listGames() {
         return gameDatabase.values();
+    }
+
+    @Override
+    public int createGame(GameData gameData) {
+        int gameID = gameData.gameID();
+        gameDatabase.put(gameID, gameData);
+        return gameID;
     }
 
 }
