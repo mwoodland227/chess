@@ -21,7 +21,4 @@ public interface UserDAO {
 
     void clearAuth();
 
-//    Collection<GameData> listGames();
-//
-//    int createGame(GameData gameData);
 }

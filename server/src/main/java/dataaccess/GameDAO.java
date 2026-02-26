@@ -11,4 +11,8 @@ public interface GameDAO {
     int createGame(GameData gameData);
 
     void clearGames();
+
+    GameData getGame(int gameID);
+
+    GameData updateGame(GameData gameData, String playerColor);
 }

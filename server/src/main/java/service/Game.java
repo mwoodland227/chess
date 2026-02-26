@@ -37,4 +37,12 @@ public class Game {
     public void clearGames() {
         gameDAO.clearGames();
     }
+
+    public void joinGame(String authToken, String playerColor, int gameID) {
+        AuthData authData = userDAO.getAuth(authToken);
+        GameData gameData = gameDAO.getGame(gameID);
+        // check the color they want is null to update the game
+        GameData joinGameResult = gameDAO.updateGame(gameData, playerColor);
+
+    }
 }

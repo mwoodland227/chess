@@ -69,6 +69,7 @@ public class Handler {
 
     public void handleJoinGame(Context ctx) {
         String authToken = ctx.header("authorization");
-
+        JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+        game.joinGame(authToken, joinGameRequest.playerColor(), joinGameRequest.gameID());
     }
 }

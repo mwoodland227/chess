@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class MemoryUser implements UserDAO {
     final private HashMap<String, UserData> userDatabase = new HashMap<>();
-    final private HashMap<String, AuthData> authDatabase = new HashMap<>();
-//    final private HashMap<Integer, GameData> gameDatabase = new HashMap<>();
+    final private HashMap<AuthData, String> authDatabase = new HashMap<>();
+    // make keys the authToken
 
     @Override
     public UserData getUser(String username) {
@@ -19,12 +19,14 @@ public class MemoryUser implements UserDAO {
 
     @Override
     public void createUser(UserData userData) {
+
         userDatabase.put(userData.username(), userData);
     }
 
     @Override
     public void createAuth(AuthData authData) {
-        authDatabase.put(authData.username(), authData);
+
+        authDatabase.put(authData, authData.username());
     }
 
     @Override
@@ -46,17 +48,5 @@ public class MemoryUser implements UserDAO {
     public void clearAuth() {
         authDatabase.clear();
     }
-
-//    @Override
-//    public Collection<GameData> listGames() {
-//        return gameDatabase.values();
-//    }
-//
-//    @Override
-//    public int createGame(GameData gameData) {
-//        int gameID = gameData.gameID();
-//        gameDatabase.put(gameID, gameData);
-//        return gameID;
-//    }
 
 }

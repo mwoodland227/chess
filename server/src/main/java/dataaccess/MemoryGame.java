@@ -27,4 +27,15 @@ public class MemoryGame implements GameDAO{
     public void clearGames() {
         gameDatabase.clear();
     }
+
+    @Override
+    public GameData getGame(int gameID) {
+        return gameDatabase.get(gameID);
+    }
+
+    @Override
+    public GameData updateGame(GameData gameData, String playerColor) {
+
+        return null;
+    }
 }
