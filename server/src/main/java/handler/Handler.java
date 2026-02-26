@@ -1,10 +1,15 @@
 package handler;
 import com.google.gson.Gson;
 import dataClasses.AuthData;
+import dataClasses.GameData;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
+import org.jetbrains.annotations.NotNull;
 import service.User;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class Handler {
     public final User user;
@@ -31,5 +36,13 @@ public class Handler {
         LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
         user.logout(logoutRequest);
 
+    }
+
+    public void handleListGames(Context ctx) {
+        ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
+        Collection<GameData> listGamesResult = user.listGames(listGamesRequest);
+
+        ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
+        ctx.status(200);
     }
 }

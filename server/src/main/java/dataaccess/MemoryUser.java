@@ -1,13 +1,16 @@
 package dataaccess;
 
 import dataClasses.AuthData;
+import dataClasses.GameData;
 import dataClasses.UserData;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class MemoryUser implements UserDAO {
     final private HashMap<String, UserData> userDatabase = new HashMap<>();
     final private HashMap<String, AuthData> authDatabase = new HashMap<>();
+    final private HashMap<AuthData, GameData> gameDatabase = new HashMap<>();
 
     @Override
     public UserData getUser(String username) {
@@ -33,4 +36,10 @@ public class MemoryUser implements UserDAO {
     public void deleteAuth(String authToken) {
         authDatabase.remove(authToken);
     }
+
+    @Override
+    public Collection<GameData> listGames(AuthData authData) {
+        return gameDatabase.values();
+    }
+
 }

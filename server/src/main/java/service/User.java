@@ -1,13 +1,16 @@
 package service;
 
 import dataClasses.AuthData;
+import dataClasses.GameData;
 import dataClasses.UserData;
 
 import dataaccess.UserDAO;
+import handler.ListGamesRequest;
 import handler.LogoutRequest;
 import handler.RegisterRequest;
 import handler.LoginRequest;
 
+import java.util.Collection;
 import java.util.UUID;
 
 
@@ -48,5 +51,10 @@ public class User {
         userDAO.getAuth(logoutRequest.authToken());
         userDAO.deleteAuth(logoutRequest.authToken());
 
+    }
+
+    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) {
+        AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
+        return userDAO.listGames(authData);
     }
 }
