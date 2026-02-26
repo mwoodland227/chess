@@ -15,6 +15,7 @@ import java.util.UUID;
 public class User {
     private final UserDAO userDAO;
 
+
     public User(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
@@ -51,17 +52,7 @@ public class User {
 
     }
 
-    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) {
-        AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
-        return userDAO.listGames();
-    }
 
-    public int createGame(String authToken, String gameName) {
-        AuthData authData = userDAO.getAuth(authToken);
-        int gameID = 1;
-        int id = userDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
-        gameID = gameID +1;
 
-        return id;
-    }
+
 }

@@ -2,10 +2,12 @@ package handler;
 import com.google.gson.Gson;
 import dataClasses.AuthData;
 import dataClasses.GameData;
+import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
 import org.jetbrains.annotations.NotNull;
+import service.Game;
 import service.User;
 
 import java.util.Collection;
@@ -13,9 +15,11 @@ import java.util.Map;
 
 public class Handler {
     public final User user;
+    public final Game game;
 
-    public Handler(UserDAO userDAO) {
+    public Handler(UserDAO userDAO, GameDAO gameDAO) {
         this.user = new User(userDAO);
+        this.game = new Game(userDAO, gameDAO);
     }
 
     public void handleRegister(Context ctx) {
@@ -40,7 +44,7 @@ public class Handler {
 
     public void handleListGames(Context ctx) {
         ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
-        Collection<GameData> listGamesResult = user.listGames(listGamesRequest);
+        Collection<GameData> listGamesResult = game.listGames(listGamesRequest);
 
         ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
         ctx.status(200);
@@ -49,7 +53,7 @@ public class Handler {
     public void handleCreateGame(Context ctx) {
         String authToken = ctx.header("authorization");
         CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
-        int id = user.createGame(authToken, createGameRequest.gameName());
+        int id = game.createGame(authToken, createGameRequest.gameName());
 
         ctx.result(new Gson().toJson(Map.of("gameID", id)));
     }

@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.GameDAO;
+import dataaccess.MemoryGame;
 import dataaccess.MemoryUser;
 import dataaccess.UserDAO;
 import handler.Handler;
@@ -8,12 +10,14 @@ import io.javalin.*;
 public class Server {
     public final Handler handle;
     public final UserDAO memoryUser;
+    public final GameDAO memoryGame;
 
     private final Javalin javalin;
 
     public Server() {
+        this.memoryGame = new MemoryGame();
         this.memoryUser = new MemoryUser();
-        this.handle = new Handler(memoryUser);
+        this.handle = new Handler(memoryUser,memoryGame);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
