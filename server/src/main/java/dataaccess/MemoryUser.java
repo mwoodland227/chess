@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class MemoryUser implements UserDAO {
     final private HashMap<String, UserData> userDatabase = new HashMap<>();
-    final private HashMap<AuthData, String> authDatabase = new HashMap<>();
+    final private HashMap<String, AuthData> authDatabase = new HashMap<>();
     // make keys the authToken
 
     @Override
@@ -26,7 +26,7 @@ public class MemoryUser implements UserDAO {
     @Override
     public void createAuth(AuthData authData) {
 
-        authDatabase.put(authData, authData.username());
+        authDatabase.put(authData.authToken(), authData);
     }
 
     @Override

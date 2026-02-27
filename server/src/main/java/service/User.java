@@ -47,7 +47,10 @@ public class User {
 
 
     public void logout(LogoutRequest logoutRequest) {
-        userDAO.getAuth(logoutRequest.authToken());
+        AuthData auth = userDAO.getAuth(logoutRequest.authToken());
+        if(auth == null) {
+            // throw exception
+        }
         userDAO.deleteAuth(logoutRequest.authToken());
 
     }
