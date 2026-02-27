@@ -34,8 +34,8 @@ public class MemoryGame implements GameDAO{
     }
 
     @Override
-    public GameData updateGame(GameData gameData, String playerColor) {
-
-        return null;
+    public void updateGame(GameData updatedGame) {
+        int id = updatedGame.gameID();
+        gameDatabase.put(id, updatedGame);
     }
 }

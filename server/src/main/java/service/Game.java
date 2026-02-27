@@ -38,11 +38,24 @@ public class Game {
         gameDAO.clearGames();
     }
 
-    public void joinGame(String authToken, String playerColor, int gameID) {
+    public void joinGame(String authToken, ChessGame.TeamColor playerColor, int gameID) {
         AuthData authData = userDAO.getAuth(authToken);
         GameData gameData = gameDAO.getGame(gameID);
+        String username = authData.username();
         // check the color they want is null to update the game
-        GameData joinGameResult = gameDAO.updateGame(gameData, playerColor);
+        GameData updatedGame = null;
+        if(playerColor == ChessGame.TeamColor.WHITE && gameData.whiteUsername() == null) {
+            String blackUsername = gameData.blackUsername();
+            updatedGame = new GameData(gameData.gameID(), username, blackUsername, gameData.gameName(), gameData.game());
+        } else if (playerColor == ChessGame.TeamColor.BLACK && gameData.blackUsername() == null) {
+            String whiteUsername = gameData.whiteUsername();
+            updatedGame = new GameData(gameData.gameID(), whiteUsername, username, gameData.gameName(), gameData.game());
+
+        } else {
+            // throw exception
+        }
+        
+        gameDAO.updateGame(updatedGame);
 
     }
 }

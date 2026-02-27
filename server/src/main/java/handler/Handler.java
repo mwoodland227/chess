@@ -1,4 +1,5 @@
 package handler;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataClasses.AuthData;
 import dataClasses.GameData;
@@ -70,6 +71,9 @@ public class Handler {
     public void handleJoinGame(Context ctx) {
         String authToken = ctx.header("authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
-        game.joinGame(authToken, joinGameRequest.playerColor(), joinGameRequest.gameID());
+        ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(joinGameRequest.playerColor());
+        game.joinGame(authToken, playerColor, joinGameRequest.gameID());
+        ctx.result("{}");
+        ctx.status(200);
     }
 }
