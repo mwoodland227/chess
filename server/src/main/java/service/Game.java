@@ -22,12 +22,20 @@ public class Game {
 
     public Collection<GameData> listGames(ListGamesRequest listGamesRequest) {
         AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
+        if(authData == null) {
+            throw new RuntimeException("Error: unauthorized");
+        }
+
         return gameDAO.listGames();
     }
 
 
     public int createGame(String authToken, String gameName) {
         AuthData authData = userDAO.getAuth(authToken);
+        if(authData == null) {
+            throw new RuntimeException("Error: unauthorized");
+        }
+
         int gameID = 1;
         int id = gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
         gameID = gameID +1;
@@ -40,10 +48,14 @@ public class Game {
 
     public void joinGame(String authToken, ChessGame.TeamColor playerColor, int gameID) {
         AuthData authData = userDAO.getAuth(authToken);
+        if(authData == null) {
+            throw new RuntimeException("Error: unauthorized");
+        }
+
         GameData gameData = gameDAO.getGame(gameID);
         String username = authData.username();
         // check the color they want is null to update the game
-        GameData updatedGame = null;
+        GameData updatedGame;
         if(playerColor == ChessGame.TeamColor.WHITE && gameData.whiteUsername() == null) {
             String blackUsername = gameData.blackUsername();
             updatedGame = new GameData(gameData.gameID(), username, blackUsername, gameData.gameName(), gameData.game());
@@ -52,9 +64,9 @@ public class Game {
             updatedGame = new GameData(gameData.gameID(), whiteUsername, username, gameData.gameName(), gameData.game());
 
         } else {
-            // throw exception
+            throw new RuntimeException("Error: already taken");
         }
-        
+
         gameDAO.updateGame(updatedGame);
 
     }

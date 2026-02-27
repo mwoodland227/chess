@@ -49,7 +49,7 @@ public class User {
     public void logout(LogoutRequest logoutRequest) {
         AuthData auth = userDAO.getAuth(logoutRequest.authToken());
         if(auth == null) {
-            // throw exception
+            throw new RuntimeException("Error: unauthorized");
         }
         userDAO.deleteAuth(logoutRequest.authToken());
 
