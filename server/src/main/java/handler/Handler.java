@@ -70,18 +70,32 @@ public class Handler {
 
     public void handleListGames(Context ctx) {
         ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
-        Collection<GameData> listGamesResult = game.listGames(listGamesRequest);
 
-        ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
-        ctx.status(200);
+        try {
+            Collection<GameData> listGamesResult = game.listGames(listGamesRequest);
+
+            ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
+            ctx.status(200);
+        }catch (DataAccessException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
     }
 
     public void handleCreateGame(Context ctx) {
         String authToken = ctx.header("authorization");
         CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
-        int id = game.createGame(authToken, createGameRequest.gameName());
 
-        ctx.result(new Gson().toJson(Map.of("gameID", id)));
+        try {
+            int id = game.createGame(authToken, createGameRequest.gameName());
+
+            ctx.result(new Gson().toJson(Map.of("gameID", id)));
+        }catch (DataAccessException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
     }
 
     public void handleClear(Context ctx) {

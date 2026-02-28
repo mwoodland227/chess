@@ -20,20 +20,23 @@ public class Game {
         this.gameDAO = gameDAO;
     }
 
-    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) {
+    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException {
         AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
         if(authData == null) {
-            throw new RuntimeException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
 
         return gameDAO.listGames();
     }
 
 
-    public int createGame(String authToken, String gameName) {
+    public int createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException {
         AuthData authData = userDAO.getAuth(authToken);
         if(authData == null) {
-            throw new RuntimeException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        if(gameName == null){
+            throw new BadRequestException("Error: bad request");
         }
 
         int gameID = 1;
