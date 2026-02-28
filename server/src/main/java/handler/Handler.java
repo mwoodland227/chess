@@ -28,16 +28,30 @@ public class Handler {
 
     public void handleRegister(Context ctx) {
         RegisterRequest registerRequest = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-        AuthData registerResult = user.register(registerRequest);
-        ctx.result(new Gson().toJson(registerResult));
-        ctx.status(200);
+
+        try {
+            AuthData registerResult = user.register(registerRequest);
+            ctx.result(new Gson().toJson(registerResult));
+            ctx.status(200);
+        }catch (DataAccessException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
     }
 
     public void handleLogin(Context ctx) {
         LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
-        AuthData loginResult = user.login(loginRequest);
-        ctx.result(new Gson().toJson(loginResult));
-        ctx.status(200);
+
+        try {
+            AuthData loginResult = user.login(loginRequest);
+            ctx.result(new Gson().toJson(loginResult));
+            ctx.status(200);
+        }catch (DataAccessException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
     }
 
     public void handleLogout(Context ctx) {

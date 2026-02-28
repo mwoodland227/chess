@@ -9,6 +9,7 @@ import dataaccess.UserDAO;
 import handler.*;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -25,20 +26,38 @@ public class User {
     }
 
 
-    public AuthData register(RegisterRequest registerRequest) {
-        userDAO.getUser(registerRequest.username());
+    public AuthData register(RegisterRequest registerRequest) throws BadRequestException, AlreadyTakenException {
+        if(registerRequest.username() == null || registerRequest.email() == null || registerRequest.password() == null){
+            throw new BadRequestException("Error: bad request");
+        }
+        if(userDAO.getUser(registerRequest.username()) == null) {
 
-        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        userDAO.createUser(userData);
+            UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+            userDAO.createUser(userData);
 
-        AuthData authData = new AuthData(generateToken(), registerRequest.username());
-        userDAO.createAuth(authData);
+            AuthData authData = new AuthData(generateToken(), registerRequest.username());
+            userDAO.createAuth(authData);
 
-        return authData;
+            return authData;
+        } else {
+            throw new AlreadyTakenException("Error: already taken");
+        }
     }
 
-    public AuthData login(LoginRequest loginRequest){
-        userDAO.getUser(loginRequest.username());
+    public AuthData login(LoginRequest loginRequest) throws BadRequestException, UnauthorizedException {
+        if(loginRequest.username() == null || loginRequest.password() == null){
+            throw new BadRequestException("Error: bad request");
+        }
+
+        UserData userData = userDAO.getUser(loginRequest.username());
+        if( userData == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+
+        }
+
+        if(!Objects.equals(userData.password(), loginRequest.password())) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
 
         AuthData authData = new AuthData(generateToken(), loginRequest.username());
         userDAO.createAuth(authData);
