@@ -3,12 +3,15 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataClasses.AuthData;
 import dataClasses.GameData;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
 import org.jetbrains.annotations.NotNull;
+import service.AlreadyTakenException;
 import service.Game;
+import service.UnauthorizedException;
 import service.User;
 
 import java.util.Collection;
@@ -39,9 +42,16 @@ public class Handler {
 
     public void handleLogout(Context ctx) {
         LogoutRequest logoutRequest = new LogoutRequest(ctx.header("authorization"));
-        user.logout(logoutRequest);
-        ctx.result("{}");
-        ctx.status(200);
+        try {
+            user.logout(logoutRequest);
+            ctx.result("{}");
+            ctx.status(200);
+        } catch (UnauthorizedException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
+
     }
 
     public void handleListGames(Context ctx) {
@@ -72,8 +82,15 @@ public class Handler {
         String authToken = ctx.header("authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
         ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(joinGameRequest.playerColor());
-        game.joinGame(authToken, playerColor, joinGameRequest.gameID());
-        ctx.result("{}");
-        ctx.status(200);
+        try {
+            game.joinGame(authToken, playerColor, joinGameRequest.gameID());
+            ctx.result("{}");
+            ctx.status(200);
+        }catch (DataAccessException e) {
+            ctx.status(e.code());
+            String message = e.getMessage();
+            ctx.result(new Gson().toJson(Map.of("message", message)));
+        }
+
     }
 }

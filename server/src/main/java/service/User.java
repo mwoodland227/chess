@@ -46,10 +46,10 @@ public class User {
     }
 
 
-    public void logout(LogoutRequest logoutRequest) {
+    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
         AuthData auth = userDAO.getAuth(logoutRequest.authToken());
         if(auth == null) {
-            throw new RuntimeException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
         userDAO.deleteAuth(logoutRequest.authToken());
 

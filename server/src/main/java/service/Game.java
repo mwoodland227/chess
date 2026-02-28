@@ -46,10 +46,10 @@ public class Game {
         gameDAO.clearGames();
     }
 
-    public void joinGame(String authToken, ChessGame.TeamColor playerColor, int gameID) {
+    public void joinGame(String authToken, ChessGame.TeamColor playerColor, int gameID) throws UnauthorizedException, AlreadyTakenException {
         AuthData authData = userDAO.getAuth(authToken);
         if(authData == null) {
-            throw new RuntimeException("Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }
 
         GameData gameData = gameDAO.getGame(gameID);
@@ -64,7 +64,7 @@ public class Game {
             updatedGame = new GameData(gameData.gameID(), whiteUsername, username, gameData.gameName(), gameData.game());
 
         } else {
-            throw new RuntimeException("Error: already taken");
+            throw new AlreadyTakenException("Error: already taken");
         }
 
         gameDAO.updateGame(updatedGame);
