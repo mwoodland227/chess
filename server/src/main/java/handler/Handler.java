@@ -72,9 +72,9 @@ public class Handler {
         ListGamesRequest listGamesRequest = new ListGamesRequest(ctx.header("authorization"));
 
         try {
-            Collection<GameData> listGamesResult = game.listGames(listGamesRequest);
+            Collection<GameData> gameList = game.listGames(listGamesRequest);
 
-            ctx.result(new Gson().toJson(Map.of("games", listGamesResult)));
+            ctx.result(new Gson().toJson(Map.of("games", gameList)));
             ctx.status(200);
         }catch (DataAccessException e) {
             ctx.status(e.code());
@@ -109,9 +109,9 @@ public class Handler {
     public void handleJoinGame(Context ctx) {
         String authToken = ctx.header("authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
-        ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(joinGameRequest.playerColor());
+
         try {
-            game.joinGame(authToken, playerColor, joinGameRequest.gameID());
+            game.joinGame(authToken, joinGameRequest.playerColor(), joinGameRequest.gameID());
             ctx.result("{}");
             ctx.status(200);
         }catch (DataAccessException e) {

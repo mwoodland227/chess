@@ -4,6 +4,7 @@ import dataClasses.AuthData;
 import dataClasses.GameData;
 import dataClasses.UserData;
 
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import handler.*;
@@ -30,7 +31,7 @@ public class Game {
     }
 
 
-    public int createGame(String authToken, String gameName) throws UnauthorizedException, BadRequestException {
+    public int createGame(String authToken, String gameName) throws DataAccessException {
         AuthData authData = userDAO.getAuth(authToken);
         if(authData == null) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -39,17 +40,14 @@ public class Game {
             throw new BadRequestException("Error: bad request");
         }
 
-        int gameID = 1;
-        int id = gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
-        gameID = gameID +1;
-        return id;
+        return gameDAO.createGame(gameName);
     }
 
     public void clearGames() {
         gameDAO.clearGames();
     }
 
-    public void joinGame(String authToken, ChessGame.TeamColor playerColor, int gameID) throws UnauthorizedException, AlreadyTakenException, BadRequestException {
+    public void joinGame(String authToken, String color, int gameID) throws DataAccessException {
         AuthData authData = userDAO.getAuth(authToken);
         if(authData == null) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -57,11 +55,12 @@ public class Game {
         if(gameID == 0) {
             throw new BadRequestException("Error: bad request");
         }
-        if(playerColor != ChessGame.TeamColor.WHITE && playerColor != ChessGame.TeamColor.BLACK) {
+        if(color == null || !color.equals("WHITE") && !color.equals("BLACK")) {
             throw new BadRequestException("Error: bad request");
         }
-
+        ChessGame.TeamColor playerColor = ChessGame.TeamColor.valueOf(color);
         GameData gameData = gameDAO.getGame(gameID);
+
         if(gameData.gameName() == null) {
             throw new BadRequestException("Error: bad request");
         }

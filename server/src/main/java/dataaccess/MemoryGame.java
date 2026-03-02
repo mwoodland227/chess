@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataClasses.AuthData;
 import dataClasses.GameData;
 import dataClasses.UserData;
@@ -17,8 +18,9 @@ public class MemoryGame implements GameDAO{
     }
 
     @Override
-    public int createGame(GameData gameData) {
-        int gameID = gameData.gameID();
+    public int createGame(String gameName) {
+        int gameID = gameDatabase.size() +1;
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
         gameDatabase.put(gameID, gameData);
         return gameID;
     }

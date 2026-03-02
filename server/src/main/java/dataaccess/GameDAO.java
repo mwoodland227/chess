@@ -8,7 +8,7 @@ public interface GameDAO {
 
     Collection<GameData> listGames();
 
-    int createGame(GameData gameData);
+    int createGame(String gameName);
 
     void clearGames();
 

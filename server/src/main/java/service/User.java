@@ -5,6 +5,7 @@ import dataClasses.AuthData;
 import dataClasses.GameData;
 import dataClasses.UserData;
 
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import handler.*;
 
@@ -26,7 +27,7 @@ public class User {
     }
 
 
-    public AuthData register(RegisterRequest registerRequest) throws BadRequestException, AlreadyTakenException {
+    public AuthData register(RegisterRequest registerRequest) throws DataAccessException {
         if(registerRequest.username() == null || registerRequest.email() == null || registerRequest.password() == null){
             throw new BadRequestException("Error: bad request");
         }
@@ -44,7 +45,7 @@ public class User {
         }
     }
 
-    public AuthData login(LoginRequest loginRequest) throws BadRequestException, UnauthorizedException {
+    public AuthData login(LoginRequest loginRequest) throws DataAccessException {
         if(loginRequest.username() == null || loginRequest.password() == null){
             throw new BadRequestException("Error: bad request");
         }
