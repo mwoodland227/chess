@@ -1,5 +1,4 @@
 package handler;
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataClasses.AuthData;
 import dataClasses.GameData;
@@ -8,8 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import io.javalin.http.Context;
 
-import org.jetbrains.annotations.NotNull;
-import service.AlreadyTakenException;
+
 import service.Game;
 import service.UnauthorizedException;
 import service.User;

@@ -2,7 +2,6 @@ package service;
 import chess.ChessGame;
 import dataClasses.AuthData;
 import dataClasses.GameData;
-import dataClasses.UserData;
 
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -10,7 +9,6 @@ import dataaccess.UserDAO;
 import handler.*;
 
 import java.util.Collection;
-import java.util.UUID;
 
 public class Game {
     private final UserDAO userDAO;

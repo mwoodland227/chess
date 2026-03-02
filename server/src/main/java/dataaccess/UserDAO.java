@@ -1,10 +1,8 @@
 package dataaccess;
 
 import dataClasses.AuthData;
-import dataClasses.GameData;
 import dataClasses.UserData;
 
-import java.util.Collection;
 
 public interface UserDAO {
     UserData getUser(String username);
