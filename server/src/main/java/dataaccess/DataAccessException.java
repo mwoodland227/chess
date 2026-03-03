@@ -9,11 +9,6 @@ public class DataAccessException extends Exception{
         super(message);
         this.code = code;
     }
-//    public DataAccessException(String message, Throwable ex, int code) {
-//        super(message, ex);
-//        this.code = code;
-//    }
-
     public int code(){
         return code;
     }

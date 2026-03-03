@@ -1,7 +1,7 @@
 package dataaccess;
 
-import dataClasses.AuthData;
-import dataClasses.UserData;
+import dataclasses.AuthData;
+import dataclasses.UserData;
 
 import java.util.HashMap;
 

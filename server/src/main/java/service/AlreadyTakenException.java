@@ -7,7 +7,4 @@ public class AlreadyTakenException extends DataAccessException {
         super(message, 403);
     }
 
-//    public int code() {
-//        return 403;
-//    }
 }

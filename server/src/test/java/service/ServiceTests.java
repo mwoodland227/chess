@@ -1,13 +1,11 @@
 package service;
-import dataClasses.AuthData;
-import dataClasses.GameData;
+import dataclasses.AuthData;
+import dataclasses.GameData;
 import dataaccess.*;
 import handler.*;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
 
 import java.util.*;
-import org.junit.jupiter.api.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +49,7 @@ public class ServiceTests {
         assertNotNull(userDAO.getUser("cameron"));
         assertNotNull(userDAO.getAuth(auth.authToken()));
     }
+
 
     @Test
     @DisplayName("Register Request Negative")

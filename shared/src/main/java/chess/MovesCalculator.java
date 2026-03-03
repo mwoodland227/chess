@@ -41,7 +41,7 @@ public class MovesCalculator {
         Collection<ChessMove> moves = new ArrayList<>();
         int row = position.getRow();
         int col = position.getColumn();
-
+// extract if statements
 
         while(true) {
             int newRow = row + direction;
@@ -89,7 +89,8 @@ public class MovesCalculator {
         return moves;
     }
 
-    public Collection<ChessMove> diagonalMoves (ChessPosition position, ChessGame.TeamColor pieceColor, ChessBoard board, int rowDirection, int colDirection) {
+    public Collection<ChessMove> diagonalMoves (ChessPosition position, ChessGame.TeamColor pieceColor,
+                                                ChessBoard board, int rowDirection, int colDirection) {
         Collection<ChessMove> moves = new ArrayList<>();
         int row = position.getRow();
         int col = position.getColumn();

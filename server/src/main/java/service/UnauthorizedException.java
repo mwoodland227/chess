@@ -8,7 +8,4 @@ public class UnauthorizedException extends DataAccessException {
         super(message, 401);
     }
 
-//    public int code() {
-//        return 401;
-//    }
 }

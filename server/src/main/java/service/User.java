@@ -1,7 +1,7 @@
 package service;
 
-import dataClasses.AuthData;
-import dataClasses.UserData;
+import dataclasses.AuthData;
+import dataclasses.UserData;
 
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;

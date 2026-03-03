@@ -18,7 +18,8 @@ public class PawnMoves extends MovesCalculator{
         return possibleMoves;
     }
 
-    public Collection<ChessMove> checkDiagonals (ChessPosition position, ChessGame.TeamColor pieceColor, ChessBoard board, int rowDirection, int colDirection) {
+    public Collection<ChessMove> checkDiagonals (ChessPosition position, ChessGame.TeamColor pieceColor,
+                                                 ChessBoard board, int rowDirection, int colDirection) {
         Collection<ChessMove> moves = new ArrayList<>();
         int row = position.getRow();
         int col = position.getColumn();
@@ -39,7 +40,6 @@ public class PawnMoves extends MovesCalculator{
         // check space in front to see if it is empty and add that to possible moves
         // check if an enemy piece is diagonal from it's position and add that to possible moves
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
         if (pieceColor == ChessGame.TeamColor.BLACK) {
             int row = myPosition.getRow();
             if (row == 7) {
@@ -103,8 +103,6 @@ public class PawnMoves extends MovesCalculator{
                 possibleMoves.addAll(leftDiagonal);
             }
         }
-
-
         // promotion
         ChessPiece.PieceType[] promotions = {ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT};

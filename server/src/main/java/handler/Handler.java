@@ -1,7 +1,7 @@
 package handler;
 import com.google.gson.Gson;
-import dataClasses.AuthData;
-import dataClasses.GameData;
+import dataclasses.AuthData;
+import dataclasses.GameData;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -116,6 +116,8 @@ public class Handler {
             ctx.status(e.code());
             String message = e.getMessage();
             ctx.result(new Gson().toJson(Map.of("message", message)));
+
+            // pass e to a function the extracts and does the ctx.result
         }
 
     }
