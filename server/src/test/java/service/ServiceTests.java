@@ -1,10 +1,8 @@
 package service;
 import dataClasses.AuthData;
+import dataClasses.GameData;
 import dataaccess.*;
-import handler.CreateGameRequest;
-import handler.LoginRequest;
-import handler.LogoutRequest;
-import handler.RegisterRequest;
+import handler.*;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 
@@ -141,7 +139,7 @@ public class ServiceTests {
         assertNotNull(userDAO.getAuth(auth2.authToken()));
         user.clearAuth();
         assertNull(userDAO.getAuth(auth.authToken()));
-        assertNull(userDAO.getAuth(auth2.authToken()));;
+        assertNull(userDAO.getAuth(auth2.authToken()));
     }
 
 
@@ -168,4 +166,30 @@ public class ServiceTests {
         CreateGameRequest newGame = new CreateGameRequest("Game1");
         assertThrows(DataAccessException.class, ()-> game.createGame("cams", newGame.gameName()));
     }
+
+    @Test
+    @DisplayName("List Games Positive")
+    public void listGamesSuccess() throws DataAccessException{
+        RegisterRequest req = new RegisterRequest("cameron", "pass", "c@g.com");
+        user.register(req);
+
+        LoginRequest login = new LoginRequest("cameron", "pass");
+        AuthData auth = user.login(login);
+
+        CreateGameRequest newGame = new CreateGameRequest("Game1");
+        game.createGame(auth.authToken(), newGame.gameName());
+
+        ListGamesRequest list = new ListGamesRequest(auth.authToken());
+        Collection<GameData> gameList = game.listGames(list);
+        assertNotNull(gameList);
+    }
+
+    @Test
+    @DisplayName("List Games Negative")
+    public void listGamesFail() {
+        ListGamesRequest list = new ListGamesRequest(null);
+        assertThrows(DataAccessException.class, ()-> game.listGames(list));
+    }
+
+
 }
