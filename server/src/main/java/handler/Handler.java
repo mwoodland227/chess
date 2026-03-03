@@ -32,9 +32,7 @@ public class Handler {
             ctx.result(new Gson().toJson(registerResult));
             ctx.status(200);
         }catch (DataAccessException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
+            exceptionCatching(e, ctx);
         }
     }
 
@@ -46,9 +44,7 @@ public class Handler {
             ctx.result(new Gson().toJson(loginResult));
             ctx.status(200);
         }catch (DataAccessException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
+            exceptionCatching(e, ctx);
         }
     }
 
@@ -59,9 +55,7 @@ public class Handler {
             ctx.result("{}");
             ctx.status(200);
         } catch (UnauthorizedException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
+            exceptionCatching(e, ctx);
         }
 
     }
@@ -75,9 +69,7 @@ public class Handler {
             ctx.result(new Gson().toJson(Map.of("games", gameList)));
             ctx.status(200);
         }catch (DataAccessException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
+            exceptionCatching(e, ctx);
         }
     }
 
@@ -90,9 +82,7 @@ public class Handler {
 
             ctx.result(new Gson().toJson(Map.of("gameID", id)));
         }catch (DataAccessException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
+            exceptionCatching(e, ctx);
         }
     }
 
@@ -113,12 +103,15 @@ public class Handler {
             ctx.result("{}");
             ctx.status(200);
         }catch (DataAccessException e) {
-            ctx.status(e.code());
-            String message = e.getMessage();
-            ctx.result(new Gson().toJson(Map.of("message", message)));
-
-            // pass e to a function the extracts and does the ctx.result
+            exceptionCatching(e, ctx);
         }
 
     }
+
+    private void exceptionCatching(DataAccessException e, Context ctx) {
+        ctx.status(e.code());
+        String message = e.getMessage();
+        ctx.result(new Gson().toJson(Map.of("message", message)));
+    }
+
 }
