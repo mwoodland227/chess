@@ -41,23 +41,12 @@ public class MovesCalculator {
         Collection<ChessMove> moves = new ArrayList<>();
         int row = position.getRow();
         int col = position.getColumn();
-// extract if statements
 
         while(true) {
             int newRow = row + direction;
             ChessPosition newPosition = new ChessPosition(newRow, col);
-            if (inbounds(newPosition)) {
-                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
-                    moves.add(new ChessMove(position, newPosition, null));
-                    if(checkSpace(board, newPosition) != null) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
+            boolean canContinue = processMove(moves, position, board, pieceColor, newRow, col);
+            if(!canContinue) break;
             row = row + direction;
         }
 
@@ -71,19 +60,8 @@ public class MovesCalculator {
 
         while(true) {
             int newCol = col + direction;
-            ChessPosition newPosition = new ChessPosition(row, newCol);
-            if (inbounds(newPosition)) {
-                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
-                    moves.add(new ChessMove(position, newPosition, null));
-                    if(checkSpace(board, newPosition) != null) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
+            boolean canContinue = processMove(moves, position, board, pieceColor, row, newCol);
+            if(!canContinue) break;
             col = col + direction;
         }
         return moves;
@@ -98,22 +76,30 @@ public class MovesCalculator {
         while(true) {
             int newCol = col + colDirection;
             int newRow = row + rowDirection;
-            ChessPosition newPosition = new ChessPosition(newRow, newCol);
-            if (inbounds(newPosition)) {
-                if (checkSpace(board, newPosition) == null || checkSpace(board, newPosition) != pieceColor) {
-                    moves.add(new ChessMove(position, newPosition, null));
-                    if(checkSpace(board, newPosition) != null) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
+            boolean canContinue = processMove(moves, position, board, pieceColor, newRow, newCol);
+            if(!canContinue) break;
             col = col + colDirection;
             row = row + rowDirection;
         }
         return moves;
+    }
+
+    private boolean processMove(Collection<ChessMove> moves, ChessPosition position, ChessBoard board,
+                                ChessGame.TeamColor pieceColor, int newRow, int newCol) {
+        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+        if (!inbounds(newPosition)) {
+            return false;
+        }
+
+        var spaceColor = checkSpace(board, newPosition);
+        if (spaceColor == null) {
+            moves.add(new ChessMove(position, newPosition, null));
+            return true;
+        } else if (spaceColor != pieceColor) {
+            moves.add(new ChessMove(position, newPosition, null));
+            return false;
+        } else {
+            return false;
+        }
     }
 }
