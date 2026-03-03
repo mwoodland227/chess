@@ -44,9 +44,10 @@ public class MovesCalculator {
 
         while(true) {
             int newRow = row + direction;
-            ChessPosition newPosition = new ChessPosition(newRow, col);
             boolean canContinue = processMove(moves, position, board, pieceColor, newRow, col);
-            if(!canContinue) break;
+            if(!canContinue){
+                break;
+            }
             row = row + direction;
         }
 
@@ -61,7 +62,9 @@ public class MovesCalculator {
         while(true) {
             int newCol = col + direction;
             boolean canContinue = processMove(moves, position, board, pieceColor, row, newCol);
-            if(!canContinue) break;
+            if(!canContinue) {
+                break;
+            }
             col = col + direction;
         }
         return moves;
@@ -77,7 +80,9 @@ public class MovesCalculator {
             int newCol = col + colDirection;
             int newRow = row + rowDirection;
             boolean canContinue = processMove(moves, position, board, pieceColor, newRow, newCol);
-            if(!canContinue) break;
+            if(!canContinue) {
+                break;
+            }
             col = col + colDirection;
             row = row + rowDirection;
         }
