@@ -191,5 +191,57 @@ public class ServiceTests {
         assertThrows(DataAccessException.class, ()-> game.listGames(list));
     }
 
+    @Test
+    @DisplayName("Join Game Positive")
+    public void joinGameSuccess() throws DataAccessException{
+        RegisterRequest req = new RegisterRequest("cameron", "pass", "c@g.com");
+        user.register(req);
+
+        LoginRequest login = new LoginRequest("cameron", "pass");
+        AuthData auth = user.login(login);
+
+        CreateGameRequest newGame = new CreateGameRequest("Game1");
+        int gameID = game.createGame(auth.authToken(), newGame.gameName());
+
+        JoinGameRequest join = new JoinGameRequest("WHITE", gameID);
+        game.joinGame(auth.authToken(), join.playerColor(), gameID);
+        GameData joined = gameDAO.getGame(gameID);
+
+        assertNotNull(joined);
+        assertEquals("cameron", joined.whiteUsername());
+
+    }
+
+    @Test
+    @DisplayName("Join Game Negative")
+    public void joinGameNegative() throws DataAccessException {
+        RegisterRequest req = new RegisterRequest("cameron", "pass", "c@g.com");
+        user.register(req);
+
+        LoginRequest login = new LoginRequest("cameron", "pass");
+        AuthData auth = user.login(login);
+        JoinGameRequest join = new JoinGameRequest("WHITE", 0);
+
+        assertThrows(DataAccessException.class, ()-> game.joinGame(auth.authToken(), join.playerColor(), join.gameID()));
+
+
+    }
+
+    @Test
+    @DisplayName("Clear Games Positive")
+    public void clearGameSuccess() throws DataAccessException {
+        RegisterRequest req = new RegisterRequest("cameron", "pass", "c@g.com");
+        user.register(req);
+
+        LoginRequest login = new LoginRequest("cameron", "pass");
+        AuthData auth = user.login(login);
+
+        CreateGameRequest newGame = new CreateGameRequest("Game1");
+
+        game.createGame(auth.authToken(), newGame.gameName());
+        assertNotNull(gameDAO.listGames());
+        game.clearGames();
+        assertEquals(0, gameDAO.listGames().size());
+    }
 
 }
