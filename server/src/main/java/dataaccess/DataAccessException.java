@@ -9,6 +9,7 @@ public class DataAccessException extends Exception{
         super(message);
         this.code = code;
     }
+
     public int code(){
         return code;
     }
