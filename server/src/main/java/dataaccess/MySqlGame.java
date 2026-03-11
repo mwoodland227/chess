@@ -42,7 +42,9 @@ public class MySqlGame implements GameDAO{
     }
 
     @Override
-    public void clearGames() {
+    public void clearGames() throws DataAccessException {
+        var statement = "TRUNCATE TABLE game";
+        executeUpdate(statement);
 
     }
 

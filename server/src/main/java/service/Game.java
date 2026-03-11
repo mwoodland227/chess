@@ -41,7 +41,7 @@ public class Game {
         return gameDAO.createGame(gameName);
     }
 
-    public void clearGames() {
+    public void clearGames() throws DataAccessException {
         gameDAO.clearGames();
     }
 
