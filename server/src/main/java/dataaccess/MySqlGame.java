@@ -78,7 +78,11 @@ public class MySqlGame implements GameDAO{
     }
 
     @Override
-    public void updateGame(GameData updatedGame) {
+    public void updateGame(GameData updatedGame) throws DataAccessException {
+        var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, gameState=? WHERE gameID=?";
+        String gameStateJson = new Gson().toJson(updatedGame.game());
+        executeUpdate(statement, updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(),
+                gameStateJson, updatedGame.gameID());
 
     }
 
