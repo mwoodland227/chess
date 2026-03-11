@@ -18,8 +18,9 @@ public class MySqlGame implements GameDAO{
     }
 
     @Override
-    public int createGame(String gameName) {
-        return 0;
+    public int createGame(String gameName) throws DataAccessException {
+        var statement = "INSERT INTO game (gameName) VALUES (?)";
+        return executeUpdate(statement, gameName);
     }
 
     @Override
