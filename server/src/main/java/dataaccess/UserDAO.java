@@ -13,7 +13,7 @@ public interface UserDAO {
 
     AuthData getAuth(String authToken) throws DataAccessException;
 
-    void deleteAuth(String authToken);
+    void deleteAuth(String authToken) throws DataAccessException;
 
     void clearUsers();
 
