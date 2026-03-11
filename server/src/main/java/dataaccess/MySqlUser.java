@@ -75,15 +75,26 @@ public class MySqlUser implements UserDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS user(
-            `id` int NOT NULL AUTO_INCREMENT,
-            `username` varchar(256) NOT NULL,
-            `password` varchar(256) NOT NULL,
-            `email` varchar(256) NOT NULL,
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `username` (`username`),
-            UNIQUE KEY `email` (`email`)
+             `id` int NOT NULL AUTO_INCREMENT,
+             `username` varchar(256) NOT NULL,
+             `password` varchar(256) NOT NULL,
+             `email` varchar(256) NOT NULL,
+             PRIMARY KEY (`id`),
+             UNIQUE KEY `username` (`username`),
+             UNIQUE KEY `email` (`email`)
             )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+
             """
+            CREATE TABLE IF NOT EXISTS auth (
+              `id` int NOT NULL AUTO_INCREMENT,
+              `username` varchar(256) NOT NULL,
+              `authToken` varchar(256) NOT NULL,
+              PRIMARY KEY (`id`),
+              INDEX (`username`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+
     };
 
     private void configureDatabase() throws DataAccessException {
