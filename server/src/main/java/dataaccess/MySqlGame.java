@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import dataclasses.GameData;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.sql.Types;
@@ -16,8 +17,22 @@ public class MySqlGame implements GameDAO{
         configureDatabase();
     }
     @Override
-    public Collection<GameData> listGames() {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        var result = new ArrayList<GameData>();
+        try(Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT gameID, gameName, whiteUsername, blackUsername, gameState FROM game";
+            try(PreparedStatement ps = conn.prepareStatement(statement)){
+                try (ResultSet rs = ps.executeQuery()){
+                    while(rs.next()){
+                        result.add(readGame(rs));
+
+                    }
+                }
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+        }
+        return result;
     }
 
     @Override
