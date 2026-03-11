@@ -63,7 +63,7 @@ public class User {
     }
 
 
-    public void logout(LogoutRequest logoutRequest) throws UnauthorizedException {
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
         AuthData auth = userDAO.getAuth(logoutRequest.authToken());
         if(auth == null) {
             throw new UnauthorizedException("Error: unauthorized");

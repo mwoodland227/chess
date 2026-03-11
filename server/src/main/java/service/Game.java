@@ -19,7 +19,7 @@ public class Game {
         this.gameDAO = gameDAO;
     }
 
-    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) throws UnauthorizedException {
+    public Collection<GameData> listGames(ListGamesRequest listGamesRequest) throws DataAccessException {
         AuthData authData = userDAO.getAuth(listGamesRequest.authToken());
         if(authData == null) {
             throw new UnauthorizedException("Error: unauthorized");

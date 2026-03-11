@@ -54,7 +54,7 @@ public class Handler {
             user.logout(logoutRequest);
             ctx.result("{}");
             ctx.status(200);
-        } catch (UnauthorizedException e) {
+        } catch (DataAccessException e) {
             exceptionCatching(e, ctx);
         }
 
