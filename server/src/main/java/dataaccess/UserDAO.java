@@ -15,8 +15,8 @@ public interface UserDAO {
 
     void deleteAuth(String authToken) throws DataAccessException;
 
-    void clearUsers();
+    void clearUsers() throws DataAccessException;
 
-    void clearAuth();
+    void clearAuth() throws DataAccessException;
 
 }

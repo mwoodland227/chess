@@ -83,12 +83,16 @@ public class MySqlUser implements UserDAO{
     }
 
     @Override
-    public void clearUsers() {
+    public void clearUsers() throws DataAccessException {
+        var statement = "TRUNCATE TABLE user";
+        executeUpdate(statement);
 
     }
 
     @Override
-    public void clearAuth() {
+    public void clearAuth() throws DataAccessException {
+        var statement = "TRUNCATE TABLE auth";
+        executeUpdate(statement);
 
     }
 

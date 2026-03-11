@@ -73,11 +73,11 @@ public class User {
     }
 
 
-    public void clearUsers() {
+    public void clearUsers() throws DataAccessException {
         userDAO.clearUsers();
     }
 
-    public void clearAuth() {
+    public void clearAuth() throws DataAccessException {
         userDAO.clearAuth();
     }
 }

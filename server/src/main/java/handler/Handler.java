@@ -9,7 +9,6 @@ import io.javalin.http.Context;
 
 
 import service.Game;
-import service.UnauthorizedException;
 import service.User;
 
 import java.util.Collection;
@@ -86,7 +85,7 @@ public class Handler {
         }
     }
 
-    public void handleClear(Context ctx) {
+    public void handleClear(Context ctx) throws DataAccessException {
         user.clearUsers();
         user.clearAuth();
         game.clearGames();
