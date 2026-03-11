@@ -1,10 +1,13 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataclasses.GameData;
 
 import java.sql.*;
 import java.util.Collection;
 import java.util.List;
+import java.sql.Types;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -29,8 +32,32 @@ public class MySqlGame implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT gameName, whiteUsername, blackUsername, gameState FROM game WHERE gameID = ?";
+            try(PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()){
+                    if(rs.next()) {
+                        return readGame(rs);
+                    }
+                }
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+        }
         return null;
+    }
+
+    private GameData readGame(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt("gameID");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        String gameStateJson = rs.getString("gameState");
+        ChessGame game = new Gson().fromJson(gameStateJson, ChessGame.class);
+
+        return new GameData(gameID, whiteUsername,blackUsername, gameName, game);
     }
 
     @Override
@@ -41,11 +68,12 @@ public class MySqlGame implements GameDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS game (
-             `id` int NOT NULL AUTO_INCREMENT,
-             `gameName` varchar(256) DEFAULT NOT NULL,
+             `gameID` int NOT NULL AUTO_INCREMENT,
+             `gameName` varchar(256) NOT NULL,
              `whiteUsername` varchar(256) DEFAULT NULL,
              `blackUsername` varchar(256) DEFAULT NULL,
-             PRIMARY KEY (`id`)
+             `gameState` TEXT DEFAULT NULL,
+             PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

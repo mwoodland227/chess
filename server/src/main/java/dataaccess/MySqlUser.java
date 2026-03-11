@@ -5,6 +5,7 @@ import dataclasses.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
+import java.sql.Types;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -25,7 +26,7 @@ public class MySqlUser implements UserDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e.getMessage(), e.getErrorCode());
         }
         return null;
     }
