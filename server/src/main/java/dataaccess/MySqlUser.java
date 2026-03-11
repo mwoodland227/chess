@@ -13,12 +13,32 @@ public class MySqlUser implements UserDAO{
         configureDatabase();
     }
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT username, password, email FROM user WHERE username = ?";
+            try(PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, username);
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()){
+                        return readUser(rs);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 
+    private UserData readUser(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String password = rs.getString("password");
+        String email = rs.getString("email");
+        return new UserData(username, password, email);
+    }
+
     @Override
-    public void createUser(UserData userData) {
+    public void createUser(UserData userData) throws DataAccessException {
         String clearTextPassword = userData.password();
         String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
@@ -26,7 +46,9 @@ public class MySqlUser implements UserDAO{
     }
 
     @Override
-    public void createAuth(AuthData authData) {
+    public void createAuth(AuthData authData) throws DataAccessException {
+        var statement = "INSERT INTO auth (username, authToken) VALUES (?,?)";
+        executeUpdate(statement, authData.username(), authData.authToken());
 
     }
 
@@ -73,7 +95,7 @@ public class MySqlUser implements UserDAO{
                 }
             }
         }catch(SQLException ex){
-                throw new DataAccessException();
+                throw new DataAccessException(ex.getMessage(), ex.getErrorCode());
         }
 
     }
@@ -99,7 +121,7 @@ public class MySqlUser implements UserDAO{
                 return 0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(e.getMessage(), e.getErrorCode());
         }
     }
 }
