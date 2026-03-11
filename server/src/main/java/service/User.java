@@ -6,6 +6,7 @@ import dataclasses.UserData;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import handler.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -29,8 +30,9 @@ public class User {
             throw new BadRequestException("bad request");
         }
         if(userDAO.getUser(registerRequest.username()) == null) {
+            String hashedPassword = BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt());
 
-            UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+            UserData userData = new UserData(registerRequest.username(), hashedPassword, registerRequest.email());
             userDAO.createUser(userData);
 
             AuthData authData = new AuthData(generateToken(), registerRequest.username());
@@ -53,7 +55,7 @@ public class User {
 
         }
 
-        if(!Objects.equals(userData.password(), loginRequest.password())) {
+        if(!BCrypt.checkpw(loginRequest.password(), userData.password())) {
             throw new UnauthorizedException("unauthorized");
         }
 

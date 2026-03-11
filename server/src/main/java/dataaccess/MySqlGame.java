@@ -90,7 +90,7 @@ public class MySqlGame implements GameDAO{
         try(Connection conn = DatabaseManager.getConnection()){
             String upperCase = statement.trim().toUpperCase();
             int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)){
+            try (PreparedStatement ps = conn.prepareStatement(statement, returnKeys)){
                 for (int i = 0; i < params.length; i++){
                     Object param = params[i];
                     if(param instanceof String p){

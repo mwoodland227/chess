@@ -39,10 +39,8 @@ public class MySqlUser implements UserDAO{
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        String clearTextPassword = userData.password();
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, userData.username(), hashedPassword, userData.email());
+        executeUpdate(statement, userData.username(), userData.password(), userData.email());
     }
 
     @Override
@@ -73,7 +71,7 @@ public class MySqlUser implements UserDAO{
     private AuthData readAuth(ResultSet rs) throws SQLException {
         String username = rs.getString("username");
         String authToken = rs.getString("authToken");
-        return new AuthData(username, authToken);
+        return new AuthData(authToken, username);
     }
 
     @Override
@@ -100,7 +98,7 @@ public class MySqlUser implements UserDAO{
         try(Connection conn = DatabaseManager.getConnection()){
             String upperCase = statement.trim().toUpperCase();
             int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)){
+            try (PreparedStatement ps = conn.prepareStatement(statement, returnKeys)){
                 for (int i = 0; i < params.length; i++){
                     Object param = params[i];
                     if(param instanceof String p){
