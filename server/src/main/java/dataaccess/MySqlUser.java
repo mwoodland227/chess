@@ -98,6 +98,8 @@ public class MySqlUser implements UserDAO{
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()){
+            String upperCase = statement.trim().toUpperCase();
+            int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)){
                 for (int i = 0; i < params.length; i++){
                     Object param = params[i];
@@ -109,12 +111,17 @@ public class MySqlUser implements UserDAO{
                         ps.setNull(i + 1, Types.VARCHAR);
                     }
                 }
-                ps.executeUpdate();
-                ResultSet rs = ps.getGeneratedKeys();
-                if(rs.next()) {
-                    return rs.getInt(1);
+                if(returnKeys == RETURN_GENERATED_KEYS) {
+                    ps.executeUpdate();
+                    try(ResultSet rs = ps.getGeneratedKeys()){
+                        if(rs.next()) {
+                            return rs.getInt(1);
+                        }
+                        return 0;
+                    }
+                } else {
+                    return ps.executeUpdate();
                 }
-                return 0;
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e.getErrorCode());
