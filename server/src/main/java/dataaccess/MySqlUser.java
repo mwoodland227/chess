@@ -84,14 +84,14 @@ public class MySqlUser implements UserDAO{
 
     @Override
     public void clearUsers() throws DataAccessException {
-        var statement = "TRUNCATE TABLE user";
+        var statement = "DELETE FROM user";
         executeUpdate(statement);
 
     }
 
     @Override
     public void clearAuth() throws DataAccessException {
-        var statement = "TRUNCATE TABLE auth";
+        var statement = "DELETE FROM auth";
         executeUpdate(statement);
 
     }
