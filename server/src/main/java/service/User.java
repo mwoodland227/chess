@@ -26,7 +26,7 @@ public class User {
 
     public AuthData register(RegisterRequest registerRequest) throws DataAccessException {
         if(registerRequest.username() == null || registerRequest.email() == null || registerRequest.password() == null){
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("bad request");
         }
         if(userDAO.getUser(registerRequest.username()) == null) {
 
@@ -38,23 +38,23 @@ public class User {
 
             return authData;
         } else {
-            throw new AlreadyTakenException("Error: already taken");
+            throw new AlreadyTakenException("already taken");
         }
     }
 
     public AuthData login(LoginRequest loginRequest) throws DataAccessException {
         if(loginRequest.username() == null || loginRequest.password() == null){
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("bad request");
         }
 
         UserData userData = userDAO.getUser(loginRequest.username());
         if( userData == null) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("unauthorized");
 
         }
 
         if(!Objects.equals(userData.password(), loginRequest.password())) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("unauthorized");
         }
 
         AuthData authData = new AuthData(generateToken(), loginRequest.username());
@@ -66,7 +66,7 @@ public class User {
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
         AuthData auth = userDAO.getAuth(logoutRequest.authToken());
         if(auth == null) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("unauthorized");
         }
         userDAO.deleteAuth(logoutRequest.authToken());
 

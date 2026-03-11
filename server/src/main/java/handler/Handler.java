@@ -114,7 +114,7 @@ public class Handler {
 
     private void exceptionCatching(DataAccessException e, Context ctx) {
         ctx.status(e.code());
-        String message = e.getMessage();
+        String message = "Error:" + e.getMessage();
         ctx.result(new Gson().toJson(Map.of("message", message)));
     }
 
