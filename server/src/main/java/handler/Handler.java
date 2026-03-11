@@ -86,11 +86,16 @@ public class Handler {
     }
 
     public void handleClear(Context ctx) throws DataAccessException {
-        user.clearUsers();
-        user.clearAuth();
-        game.clearGames();
-        ctx.result("{}");
-        ctx.status(200);
+        try{
+            user.clearUsers();
+            user.clearAuth();
+            game.clearGames();
+            ctx.result("{}");
+            ctx.status(200);
+        } catch (DataAccessException e){
+            exceptionCatching(e, ctx);
+        }
+
     }
 
     public void handleJoinGame(Context ctx) {

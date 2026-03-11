@@ -50,7 +50,7 @@ public class MySqlGame implements GameDAO{
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()){
-            var statement = "SELECT gameName, whiteUsername, blackUsername, gameState FROM game WHERE gameID = ?";
+            var statement = "SELECT gameID, gameName, whiteUsername, blackUsername, gameState FROM game WHERE gameID = ?";
             try(PreparedStatement ps = conn.prepareStatement(statement)){
                 ps.setInt(1, gameID);
                 try (ResultSet rs = ps.executeQuery()){
