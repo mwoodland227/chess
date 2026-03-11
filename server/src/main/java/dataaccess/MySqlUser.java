@@ -53,8 +53,27 @@ public class MySqlUser implements UserDAO{
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        try(Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECTION username, authToken FROM auth WHERE authToken = ?";
+            try(PreparedStatement ps =conn.prepareStatement(statement)){
+                ps.setString(1, authToken);
+                try(ResultSet rs = ps.executeQuery()) {
+                    if(rs.next()){
+                        return readAuth(rs);
+                    }
+                }
+            }
+        } catch(SQLException e){
+            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+        }
         return null;
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String authToken = rs.getString("authToken");
+        return new AuthData(username, authToken);
     }
 
     @Override
