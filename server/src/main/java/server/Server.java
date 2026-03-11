@@ -1,23 +1,25 @@
 package server;
 
-import dataaccess.GameDAO;
-import dataaccess.MemoryGame;
-import dataaccess.MemoryUser;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import handler.Handler;
 import io.javalin.*;
 
 public class Server {
     public final Handler handle;
-    public final UserDAO memoryUser;
-    public final GameDAO memoryGame;
+    public final UserDAO userDAO;
+    public final GameDAO gameDAO;
 
     private final Javalin javalin;
 
     public Server() {
-        this.memoryGame = new MemoryGame();
-        this.memoryUser = new MemoryUser();
-        this.handle = new Handler(memoryUser,memoryGame);
+        try{
+            this.gameDAO = new MySqlGame();
+            this.userDAO = new MySqlUser();
+            DatabaseManager.configureDatabase();
+        } catch (DataAccessException e){
+            throw new RuntimeException(e);
+        }
+        this.handle = new Handler(userDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

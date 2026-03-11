@@ -13,8 +13,7 @@ import java.sql.Types;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySqlGame implements GameDAO{
-    public MySqlGame() throws DataAccessException{
-        configureDatabase();
+    public MySqlGame(){
     }
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
@@ -86,32 +85,6 @@ public class MySqlGame implements GameDAO{
 
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS game (
-             `gameID` int NOT NULL AUTO_INCREMENT,
-             `gameName` varchar(256) NOT NULL,
-             `whiteUsername` varchar(256) DEFAULT NULL,
-             `blackUsername` varchar(256) DEFAULT NULL,
-             `gameState` TEXT DEFAULT NULL,
-             PRIMARY KEY (`gameID`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try(Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        }catch(SQLException ex){
-            throw new DataAccessException(ex.getMessage(), ex.getErrorCode());
-        }
-
-    }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()){

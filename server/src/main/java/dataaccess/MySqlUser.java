@@ -10,8 +10,7 @@ import java.sql.Types;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySqlUser implements UserDAO{
-    public MySqlUser() throws DataAccessException {
-        configureDatabase();
+    public MySqlUser() {
     }
     @Override
     public UserData getUser(String username) throws DataAccessException {
@@ -94,45 +93,6 @@ public class MySqlUser implements UserDAO{
     public void clearAuth() throws DataAccessException {
         var statement = "TRUNCATE TABLE auth";
         executeUpdate(statement);
-
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS user(
-             `id` int NOT NULL AUTO_INCREMENT,
-             `username` varchar(256) NOT NULL,
-             `password` varchar(256) NOT NULL,
-             `email` varchar(256) NOT NULL,
-             PRIMARY KEY (`id`),
-             UNIQUE KEY `username` (`username`),
-             UNIQUE KEY `email` (`email`)
-            )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """,
-
-            """
-            CREATE TABLE IF NOT EXISTS auth (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `username` varchar(256) NOT NULL,
-              `authToken` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX (`username`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try(Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        }catch(SQLException ex){
-                throw new DataAccessException(ex.getMessage(), ex.getErrorCode());
-        }
 
     }
 
