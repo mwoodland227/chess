@@ -1,6 +1,7 @@
 package dataaccess;
 
 import dataclasses.UserData;
+import dataclasses.AuthData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,10 +30,10 @@ public class MySqlTests {
 
     void clearAuthPositive() throws DataAccessException {
         userDao.createUser(new UserData("cameron", "pass", "c@m"));
+        userDao.createAuth(new AuthData("cameron", "token"));
 
-        userDao.clearUsers();
+        userDao.clearAuth();
 
-        assertNull(userDao.getUser("user"));
-        assertNull(userDao.getUser("cameron"));
+        assertNull(userDao.getAuth("token"));
     }
 }
