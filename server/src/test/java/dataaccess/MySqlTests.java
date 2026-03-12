@@ -5,7 +5,7 @@ import dataclasses.AuthData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MySqlTests {
     private static MySqlUser userDao;
@@ -31,12 +31,28 @@ public class MySqlTests {
     @Test
     void clearAuthPositive() throws DataAccessException {
         userDao.createUser(new UserData("cameron", "pass", "c@m"));
-        userDao.createAuth(new AuthData("cameron", "token"));
+        userDao.createAuth(new AuthData("token", "cam"));
 
         userDao.clearAuth();
 
         assertNull(userDao.getAuth("token"));
     }
+
+    @Test
+    void getUserPositive() throws DataAccessException {
+        userDao.createUser(new UserData("cam", "pass", "c@g"));
+        UserData result = userDao.getUser("cam");
+
+        assertNotNull(result);
+        assertEquals("cam", result.username());
+    }
+
+    @Test
+    void getUserNegative() throws DataAccessException {
+        UserData result = userDao.getUser("none");
+        assertNull(result);
+    }
+
 
     @Test
     void createUserPositive() throws DataAccessException{
@@ -45,8 +61,47 @@ public class MySqlTests {
         UserData result = userDao.getUser("cameron");
 
         assertNotNull(result);
-        assertEquals("alice", result.username());
-        assertNotEquals("pass123", result.password());
-        assertEquals("alice@test.com", result.email());
+        assertEquals("cameron", result.username());
+        assertNotEquals("pass", result.password());
+        assertEquals("c@g", result.email());
+    }
+
+    @Test
+    void createAuthPositive() throws DataAccessException{
+        userDao.createUser(new UserData("cameron", "pass", "c@g"));
+        AuthData auth = new AuthData("token", "cameron");
+
+        userDao.createAuth(auth);
+        AuthData result = userDao.getAuth("token");
+
+        assertNotNull(result);
+        assertEquals("cameron", result.username());
+        assertEquals("token", result.authToken());
+    }
+
+    @Test
+    void deleteAuthPositive() throws DataAccessException{
+        userDao.createUser(new UserData("cameron", "pass", "c@g"));
+        userDao.createAuth(new AuthData("token", "cameron"));
+
+        userDao.deleteAuth("token");
+
+        assertNull(userDao.getAuth("token"));
+    }
+
+    @Test
+    void getAuthPositive() throws DataAccessException {
+        userDao.createUser(new UserData("cam", "pass", "c@g"));
+        userDao.createAuth(new AuthData("token", "cam"));
+        AuthData result = userDao.getAuth("token");
+
+        assertNotNull(result);
+        assertEquals("cam", result.username());
+    }
+
+    @Test
+    void getAuthNegative_missingAuth() throws DataAccessException {
+        AuthData result = userDao.getAuth("noToken");
+        assertNull(result);
     }
 }
