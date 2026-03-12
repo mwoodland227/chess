@@ -37,13 +37,13 @@ public class MySqlGame implements GameDAO{
     @Override
     public int createGame(String gameName) throws DataAccessException {
         var statement = "INSERT INTO game (gameName) VALUES (?)";
-        return executeUpdate(statement, gameName);
+        return DatabaseManager.executeUpdate(statement, gameName);
     }
 
     @Override
     public void clearGames() throws DataAccessException {
         var statement = "DELETE FROM game";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
 
     }
 
@@ -80,41 +80,8 @@ public class MySqlGame implements GameDAO{
     public void updateGame(GameData updatedGame) throws DataAccessException {
         var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, gameState=? WHERE gameID=?";
         String gameStateJson = new Gson().toJson(updatedGame.game());
-        executeUpdate(statement, updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(),
+        DatabaseManager.executeUpdate(statement, updatedGame.gameName(), updatedGame.whiteUsername(), updatedGame.blackUsername(),
                 gameStateJson, updatedGame.gameID());
 
-    }
-
-
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try(Connection conn = DatabaseManager.getConnection()){
-            String upperCase = statement.trim().toUpperCase();
-            int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
-            try (PreparedStatement ps = conn.prepareStatement(statement, returnKeys)){
-                for (int i = 0; i < params.length; i++){
-                    Object param = params[i];
-                    if(param instanceof String p){
-                        ps.setString(i + 1, p);
-                    }else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    }else if(param == null) {
-                        ps.setNull(i + 1, Types.VARCHAR);
-                    }
-                }
-                if(returnKeys == RETURN_GENERATED_KEYS) {
-                    ps.executeUpdate();
-                    try(ResultSet rs = ps.getGeneratedKeys()){
-                        if(rs.next()) {
-                            return rs.getInt(1);
-                        }
-                        return 0;
-                    }
-                } else {
-                    return ps.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
-        }
     }
 }

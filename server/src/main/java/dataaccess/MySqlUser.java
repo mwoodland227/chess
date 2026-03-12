@@ -40,13 +40,13 @@ public class MySqlUser implements UserDAO{
     @Override
     public void createUser(UserData userData) throws DataAccessException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        executeUpdate(statement, userData.username(), userData.password(), userData.email());
+        DatabaseManager.executeUpdate(statement, userData.username(), userData.password(), userData.email());
     }
 
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
         var statement = "INSERT INTO auth (username, authToken) VALUES (?,?)";
-        executeUpdate(statement, authData.username(), authData.authToken());
+        DatabaseManager.executeUpdate(statement, authData.username(), authData.authToken());
 
     }
 
@@ -77,52 +77,22 @@ public class MySqlUser implements UserDAO{
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         var statement = "DELETE FROM auth WHERE authToken = ?";
-        executeUpdate(statement, authToken);
+        DatabaseManager.executeUpdate(statement, authToken);
     }
 
     @Override
     public void clearUsers() throws DataAccessException {
         var statement = "DELETE FROM user";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
 
     }
 
     @Override
     public void clearAuth() throws DataAccessException {
         var statement = "DELETE FROM auth";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
 
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
-        try(Connection conn = DatabaseManager.getConnection()){
-            String upperCase = statement.trim().toUpperCase();
-            int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
-            try (PreparedStatement ps = conn.prepareStatement(statement, returnKeys)){
-                for (int i = 0; i < params.length; i++){
-                    Object param = params[i];
-                    if(param instanceof String p){
-                        ps.setString(i + 1, p);
-                    }else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    }else if(param == null) {
-                        ps.setNull(i + 1, Types.VARCHAR);
-                    }
-                }
-                if(returnKeys == RETURN_GENERATED_KEYS) {
-                    ps.executeUpdate();
-                    try(ResultSet rs = ps.getGeneratedKeys()){
-                        if(rs.next()) {
-                            return rs.getInt(1);
-                        }
-                        return 0;
-                    }
-                } else {
-                    return ps.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
-        }
-    }
+
 }

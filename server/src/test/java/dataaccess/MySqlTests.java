@@ -33,7 +33,7 @@ public class MySqlTests {
     @Test
     void clearAuthPositive() throws DataAccessException {
         userDao.createUser(new UserData("cameron", "pass", "c@m"));
-        userDao.createAuth(new AuthData("token", "cam"));
+        userDao.createAuth(new AuthData("token", "cameron"));
 
         userDao.clearAuth();
 
