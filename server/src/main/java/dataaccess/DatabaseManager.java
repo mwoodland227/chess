@@ -125,35 +125,33 @@ public class DatabaseManager {
 
     }
 
-    public int executeUpdate(String statement, Object... params) throws DataAccessException {
+    public static int executeUpdate(String statement, Object... params) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection()){
             String upperCase = statement.trim().toUpperCase();
             int returnKeys = upperCase.startsWith("INSERT") ? RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS;
+
             try (PreparedStatement ps = conn.prepareStatement(statement, returnKeys)){
-                for (int i = 0; i < params.length; i++){
-                    Object param = params[i];
-                    if(param instanceof String p){
-                        ps.setString(i + 1, p);
-                    }else if (param instanceof Integer p) {
-                        ps.setInt(i + 1, p);
-                    }else if(param == null) {
-                        ps.setNull(i + 1, Types.VARCHAR);
-                    }
-                }
+                bindParameters(ps, params);
+
                 if(returnKeys == RETURN_GENERATED_KEYS) {
                     ps.executeUpdate();
                     try(ResultSet rs = ps.getGeneratedKeys()){
-                        if(rs.next()) {
-                            return rs.getInt(1);
-                        }
-                        return 0;
+                        return rs.next() ? rs.getInt(1) : 0;
                     }
-                } else {
-                    return ps.executeUpdate();
                 }
+                return ps.executeUpdate();
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage(), e.getErrorCode());
+        }
+    }
+
+    private static void bindParameters(PreparedStatement ps, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++){
+            Object param = params[i];
+            if(param instanceof String p) ps.setString(i + 1, p);
+            else if (param instanceof Integer p) ps.setInt(i + 1, p);
+            else if(param == null) ps.setNull(i + 1, Types.VARCHAR);
         }
     }
 }
