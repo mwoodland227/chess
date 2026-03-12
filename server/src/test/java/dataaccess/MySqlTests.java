@@ -1,10 +1,12 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataclasses.UserData;
 import dataclasses.AuthData;
 import dataclasses.GameData;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +19,13 @@ public class MySqlTests {
     static void setup() throws DataAccessException{
         userDao = new MySqlUser();
         gameDao = new MySqlGame();
+    }
+
+    @BeforeEach
+    void clearAll() throws DataAccessException{
+        userDao.clearUsers();
+        userDao.clearAuth();
+        gameDao.clearGames();
     }
 
     @Test
@@ -64,7 +73,7 @@ public class MySqlTests {
 
         assertNotNull(result);
         assertEquals("cameron", result.username());
-        assertNotEquals("pass", result.password());
+        assertTrue(result.password().startsWith("$2a"));
         assertEquals("c@g", result.email());
     }
 
@@ -92,7 +101,7 @@ public class MySqlTests {
 
 
     @Test
-    void createAuthNegative_duplicateToken() throws DataAccessException {
+    void createAuthNegative() throws DataAccessException {
         userDao.createUser(new UserData("cam", "pass", "c@g"));
         userDao.createAuth(new AuthData("dupt", "cam"));
 
@@ -128,7 +137,7 @@ public class MySqlTests {
     }
 
     @Test
-    void getAuthNegative_missingAuth() throws DataAccessException {
+    void getAuthNegative() throws DataAccessException {
         AuthData result = userDao.getAuth("noToken");
         assertNull(result);
     }
@@ -147,7 +156,7 @@ public class MySqlTests {
     }
 
     @Test
-    void createGameNegative_emptyName() throws DataAccessException {
+    void createGameNegative() throws DataAccessException {
         assertThrows(DataAccessException.class, () -> {
             gameDao.createGame("");
         });
@@ -200,7 +209,7 @@ public class MySqlTests {
     }
 
     @Test
-    void updateGameNegative_invalidGameId() throws DataAccessException {
+    void updateGameNegative() throws DataAccessException {
         ChessGame gameState = new ChessGame();
         GameData fakeGame = new GameData(999999, "White", "Black", "Fake", gameState);
         gameDao.updateGame(fakeGame);
