@@ -80,6 +80,27 @@ public class MySqlTests {
     }
 
     @Test
+    void createUserNegative() throws DataAccessException {
+        userDao.createUser(new UserData("cam", "pass", "c@g"));
+
+        assertThrows(DataAccessException.class, () -> {
+            userDao.createUser(new UserData("cam", "pass2", "cj@g"));
+        });
+    }
+
+
+    @Test
+    void createAuthNegative_duplicateToken() throws DataAccessException {
+        userDao.createUser(new UserData("cam", "pass", "c@g"));
+        userDao.createAuth(new AuthData("dupt", "cam"));
+
+        assertThrows(DataAccessException.class, () -> {
+            userDao.createAuth(new AuthData("dupt", "cam"));
+        });
+    }
+
+
+    @Test
     void deleteAuthPositive() throws DataAccessException{
         userDao.createUser(new UserData("cameron", "pass", "c@g"));
         userDao.createAuth(new AuthData("token", "cameron"));
@@ -103,5 +124,16 @@ public class MySqlTests {
     void getAuthNegative_missingAuth() throws DataAccessException {
         AuthData result = userDao.getAuth("noToken");
         assertNull(result);
+    }
+
+    @Test
+    void createGamePositive() throws DataAccessException {
+        int gameId = gameDao.createGame("Test Game");
+
+        assertTrue(gameId > 0);
+
+        GameData game = gameDao.getGame(gameId);
+        assertNotNull(game);
+        assertEquals("Test Game", game.gameName());
     }
 }
