@@ -77,7 +77,7 @@ public class DatabaseManager {
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
     }
 
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATMENTS = {
             """
             CREATE TABLE IF NOT EXISTS user(
              `username` varchar(256) NOT NULL,
@@ -114,7 +114,7 @@ public class DatabaseManager {
     public static void configureDatabase() throws DataAccessException {
         createDatabase();
         try(Connection conn = getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : CREATE_STATMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
@@ -149,9 +149,15 @@ public class DatabaseManager {
     private static void bindParameters(PreparedStatement ps, Object... params) throws SQLException {
         for (int i = 0; i < params.length; i++){
             Object param = params[i];
-            if(param instanceof String p) ps.setString(i + 1, p);
-            else if (param instanceof Integer p) ps.setInt(i + 1, p);
-            else if(param == null) ps.setNull(i + 1, Types.VARCHAR);
+            if(param instanceof String p){
+                ps.setString(i + 1, p);
+            }
+            else if (param instanceof Integer p){
+                ps.setInt(i + 1, p);
+            }
+            else if(param == null) {
+                ps.setNull(i + 1, Types.VARCHAR);
+            }
         }
     }
 }
