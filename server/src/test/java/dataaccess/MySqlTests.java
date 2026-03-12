@@ -28,6 +28,7 @@ public class MySqlTests {
         assertNull(userDao.getUser("cameron"));
     }
 
+    @Test
     void clearAuthPositive() throws DataAccessException {
         userDao.createUser(new UserData("cameron", "pass", "c@m"));
         userDao.createAuth(new AuthData("cameron", "token"));
@@ -35,5 +36,17 @@ public class MySqlTests {
         userDao.clearAuth();
 
         assertNull(userDao.getAuth("token"));
+    }
+
+    @Test
+    void createUserPositive() throws DataAccessException{
+        UserData user = new UserData("cameron", "pass", "c@g");
+        userDao.createUser(user);
+        UserData result = userDao.getUser("cameron");
+
+        assertNotNull(result);
+        assertEquals("alice", result.username());
+        assertNotEquals("pass123", result.password());
+        assertEquals("alice@test.com", result.email());
     }
 }
