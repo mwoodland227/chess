@@ -105,8 +105,8 @@ public class Menu {
             case SIGNEDIN -> """
                     - createGame <gameName>
                     - listGames
-                    - playGame <gameNumber> <color, white or black>
-                    - observe <gameNumber>
+                    - playGame <gameID> <color, white or black>
+                    - observe <gameID>
                     """;
         };
     }
@@ -123,6 +123,29 @@ public class Menu {
         return "list of games";
     }
 
+    public String play(String... params){
+        if (params.length == 2){
+            String color = params[1].toUpperCase();
 
+            try{
+                int gameID = Integer.parseInt(params[0]);
+                if(color.equals("WHITE") || color.equals("BLACK")){
+                    return "joining " + gameID +" as" + color;
+                }
+                return "Color must be WHITE or BLACK.";
+            } catch ()
+        }
+        return "Expected: <gameID> <WHITE|BLACK>";
+    }
+
+    public String observe(String... params){
+        if(params.length == 1){
+            int gameID = Integer.parseInt(params[0]);
+            try{
+                return "observing " + gameID;
+            } catch ()
+        }
+        return "Expected: <gameName";
+    }
 
 }
