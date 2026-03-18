@@ -70,7 +70,6 @@ public class Menu {
             password = params[1];
 
             state = State.SIGNEDIN;
-            username = String.join("-", params);
 
             return "Logged in as " + username;
         }
@@ -92,7 +91,7 @@ public class Menu {
 
             return "User " + username + "registered";
         }
-        return "Expected: <username? <password> <email>";
+        return "Expected: <username> <password> <email>";
     }
 
     public String help(){
@@ -108,11 +107,22 @@ public class Menu {
                     - listGames
                     - playGame <gameNumber> <color, white or black>
                     - observe <gameNumber>
-                    - logout
-                    - help
-                    - quit
                     """;
         };
     }
+
+    public String createGame(String... params){
+        if(params.length == 1){
+            String gameName = params[0];
+            return "Game " + gameName + " created";
+        }
+        return "Expected: <gameName>";
+    }
+
+    public String listGames(){
+        return "list of games";
+    }
+
+
 
 }
