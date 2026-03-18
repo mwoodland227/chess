@@ -51,11 +51,17 @@ public class MySqlTests {
 
     @Test
     void getUserPositive() throws DataAccessException {
-        userDao.createUser(new UserData("cam", "pass", "c@g"));
-        UserData result = userDao.getUser("cam");
+        String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw("pass",
+                org.mindrot.jbcrypt.BCrypt.gensalt());
+        UserData user = new UserData("cameron", hashedPassword, "c@g");
+
+        userDao.createUser(user);
+        UserData result = userDao.getUser("cameron");
 
         assertNotNull(result);
-        assertEquals("cam", result.username());
+        assertEquals("cameron", result.username());
+        assertEquals(hashedPassword, result.password());
+        assertEquals("c@g", result.email());
     }
 
     @Test
