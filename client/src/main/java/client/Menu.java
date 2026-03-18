@@ -82,4 +82,24 @@ public class Menu {
         return "Logged out";
     }
 
+    public String help(){
+        return switch (state){
+            case SIGNEDOUT -> """
+                    - register <username> <password> <email>
+                    - login <username> <password>
+                    - help
+                    - quit
+                    """;
+            case SIGNEDIN -> """
+                    - createGame <gameName>
+                    - listGames
+                    - playGame <gameNumber> <color, white or black>
+                    - observe <gameNumber>
+                    - logout
+                    - help
+                    - quit
+                    """;
+        };
+    }
+
 }
