@@ -9,6 +9,7 @@ public class Menu {
     private State state = State.SIGNEDOUT;
     private String username;
     private String password;
+    private String email;
 
     public void readEval() {
         System.out.println("Welcome to Chess. Sign in to start.");
@@ -79,7 +80,19 @@ public class Menu {
     public String logout() {
         state = State.SIGNEDOUT;
         username = null;
+        password = null;
         return "Logged out";
+    }
+
+    public String register(String... params){
+        if (params.length == 3){
+            username = params[0];
+            password = params[1];
+            email = params[2];
+
+            return "User " + username + "registered";
+        }
+        return "Expected: <username? <password> <email>";
     }
 
     public String help(){
