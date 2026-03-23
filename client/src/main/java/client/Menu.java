@@ -20,10 +20,8 @@ public class Menu {
             printPrompt();
             String line = scanner.nextLine();
 
-            try{
-                result = eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
-            } catch() {}
+            result = eval(line);
+            System.out.print(SET_TEXT_COLOR_BLUE + result);
         }
 
 
@@ -61,10 +59,12 @@ public class Menu {
                     default -> help();
                 };
             };
-        } catch () {}
+        } catch (ClientException e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
-    public String login(String... params){
+    public String login(String... params) throws ClientException {
         if(params.length == 2){
             username = params[0];
             password = params[1];
@@ -73,7 +73,7 @@ public class Menu {
 
             return "Logged in as " + username;
         }
-        return "Expected: <username> <password>";
+        throw new ClientException("Expected: <username> <password>");
     }
 
     public String logout() {
@@ -83,7 +83,7 @@ public class Menu {
         return "Logged out";
     }
 
-    public String register(String... params){
+    public String register(String... params) throws ClientException{
         if (params.length == 3){
             username = params[0];
             password = params[1];
@@ -91,7 +91,7 @@ public class Menu {
 
             return "User " + username + "registered";
         }
-        return "Expected: <username> <password> <email>";
+        throw new ClientException("Expected: <username> <password> <email>");
     }
 
     public String help(){
@@ -111,19 +111,19 @@ public class Menu {
         };
     }
 
-    public String createGame(String... params){
+    public String createGame(String... params) throws ClientException{
         if(params.length == 1){
             String gameName = params[0];
             return "Game " + gameName + " created";
         }
-        return "Expected: <gameName>";
+        throw new ClientException("Expected: <gameName>");
     }
 
     public String listGames(){
         return "list of games";
     }
 
-    public String play(String... params){
+    public String play(String... params) throws ClientException{
         if (params.length == 2){
             String color = params[1].toUpperCase();
 
@@ -132,20 +132,24 @@ public class Menu {
                 if(color.equals("WHITE") || color.equals("BLACK")){
                     return "joining " + gameID +" as" + color;
                 }
-                return "Color must be WHITE or BLACK.";
-            } catch ()
+                throw new ClientException("Color must be WHITE or BLACK.");
+            } catch (NumberFormatException e) {
+                throw new ClientException("Game ID must be an integer.");
+            }
         }
-        return "Expected: <gameID> <WHITE|BLACK>";
+        throw new ClientException("Expected: <gameID> <WHITE|BLACK>");
     }
 
-    public String observe(String... params){
+    public String observe(String... params) throws ClientException{
         if(params.length == 1){
-            int gameID = Integer.parseInt(params[0]);
             try{
+                int gameID = Integer.parseInt(params[0]);
                 return "observing " + gameID;
-            } catch ()
+            } catch (NumberFormatException e){
+                throw new ClientException("Game ID must be an integer.");
+            }
         }
-        return "Expected: <gameName";
+        throw new ClientException("Expected: <gameName");
     }
 
 }
