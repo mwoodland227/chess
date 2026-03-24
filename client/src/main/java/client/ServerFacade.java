@@ -1,12 +1,15 @@
 package client;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.List;
 
+import com.google.gson.reflect.TypeToken;
 import dataclasses.AuthData;
 import dataclasses.GameData;
 import dataclasses.UserData;
@@ -55,6 +58,16 @@ public class ServerFacade {
         var request = buildRequest("PUT", "/game", requestData, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
+    }
+
+    public List<GameData> listGame(String authToken) throws ClientException{
+        var request = buildRequest("GET", "/game", null, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+
+        String body = response.body();
+        Type listGames = new TypeToken<List<GameData>>(){}.getType();
+        return new Gson().fromJson(body, listGames);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
