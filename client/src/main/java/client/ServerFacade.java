@@ -21,7 +21,7 @@ public class ServerFacade {
         this.url = url;
     }
 
-    public AuthData register(String username, String password, String email) {
+    public AuthData register(String username, String password, String email) throws ClientException{
         var requestData = new RegisterRequest(username, password, email);
         var request = buildRequest("Post", "/user", requestData, null);
         var response = sendRequest(request);
@@ -52,18 +52,18 @@ public class ServerFacade {
         try{
             return client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-
+            throw new ClientException("HTTP request failed: " + e.getMessage());
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass){
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException{
         int status = response.statusCode();
         if(!isSuccessful(status)){
             String body = response.body();
             if(body != null){
-                throw
+                throw new ClientException("Server error: " + body);
             }
-            throw
+            throw new ClientException("HTTP " + status);
         }
         if(responseClass != null){
             return new Gson().fromJson(response.body(), responseClass);
