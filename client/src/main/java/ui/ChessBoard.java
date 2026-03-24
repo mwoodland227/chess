@@ -26,4 +26,24 @@ public class ChessBoard {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
+
+    private static void drawHeaders(PrintStream out){
+        setBlack(out);
+        drawColHeaders(out);
+        out.println();
+    }
+
+    private static void drawColHeaders(PrintStream out){
+        out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS /2));
+        out.print("   ");
+
+        for(int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col){
+            char c = COLS.charAt(col);
+            drawColHeaders(out, c);
+
+            if(col < BOARD_SIZE_IN_SQUARES -1){
+                out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
+            }
+        }
+    }
 }
