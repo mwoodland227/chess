@@ -18,7 +18,7 @@ public class ChessBoard {
     private static final String ROWS = "12345678";
     private static final String COLS = "abcdefgh";
 
-    public static void main(String[] args){
+    static void main(String[] args){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
         drawHeaders(out);

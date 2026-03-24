@@ -32,7 +32,7 @@ public class Menu {
     }
 
     public void readEval() {
-        System.out.println("Welcome to Chess. Sign in to start.");
+        System.out.println("Welcome to Chess. Type help to start.");
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -69,8 +69,8 @@ public class Menu {
                     default -> help();
                 };
                 case SIGNEDIN -> switch (cmd) {
-                    case "creategame" -> createGame(params);
-                    case "listgames" -> listGames();
+                    case "createGame" -> createGame(params);
+                    case "listGames" -> listGames();
                     case "play" -> play(params);
                     case "observe" -> observe(params);
                     case "logout" -> logout();
@@ -113,7 +113,7 @@ public class Menu {
             email = params[2];
             UserData user = server.register(username, password, email);
 
-            return "User " + user.username() + "registered";
+            return "User " + user.username() + " registered";
         }
         throw new ClientException("Expected: <username> <password> <email>");
     }

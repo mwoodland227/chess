@@ -21,7 +21,7 @@ public class MySqlUser implements UserDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+            throw new DataAccessException(e.getMessage(), 500);
         }
         return null;
     }
@@ -59,7 +59,7 @@ public class MySqlUser implements UserDAO{
                 }
             }
         } catch(SQLException e){
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+            throw new DataAccessException(e.getMessage(), 500);
         }
         return null;
     }

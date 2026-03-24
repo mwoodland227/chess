@@ -25,7 +25,7 @@ public class MySqlGame implements GameDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+            throw new DataAccessException(e.getMessage(), 500);
         }
         return result;
     }
@@ -56,7 +56,7 @@ public class MySqlGame implements GameDAO{
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException(e.getMessage(), e.getErrorCode());
+            throw new DataAccessException(e.getMessage(), 500);
         }
         return null;
     }
