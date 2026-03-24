@@ -8,6 +8,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 
 import dataclasses.AuthData;
+import handler.LoginRequest;
+import handler.LogoutRequest;
 import handler.RegisterRequest;
 import com.google.gson.Gson;
 
@@ -24,6 +26,13 @@ public class ServerFacade {
     public AuthData register(String username, String password, String email) throws ClientException{
         var requestData = new RegisterRequest(username, password, email);
         var request = buildRequest("Post", "/user", requestData, null);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
+    }
+
+    public AuthData login(String username, String password) throws ClientException{
+        var requestData = new LoginRequest(username, password);
+        var request = buildRequest("POST", "/session", requestData, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
