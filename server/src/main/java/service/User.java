@@ -8,7 +8,6 @@ import dataaccess.UserDAO;
 import handler.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
 import java.util.UUID;
 
 

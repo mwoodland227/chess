@@ -7,10 +7,6 @@ import dataclasses.GameData;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.sql.Types;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySqlGame implements GameDAO{
     public MySqlGame(){
