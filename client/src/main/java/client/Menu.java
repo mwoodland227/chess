@@ -1,9 +1,13 @@
 package client;
 
+import ui.ChessBoard;
+
 import dataclasses.AuthData;
 import dataclasses.GameData;
 import dataclasses.UserData;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -12,6 +16,7 @@ import static ui.EscapeSequences.*;
 
 public class Menu {
     private final ServerFacade server;
+    private final PrintStream out;
     private State state = State.SIGNEDOUT;
     private String username;
     private String password;
@@ -20,6 +25,7 @@ public class Menu {
 
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
+        this.out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     }
 
     public void readEval() {
@@ -160,10 +166,16 @@ public class Menu {
                 throw new ClientException("Color must be BLACK or WHITE.");
             }
             server.joinGame(authToken, gameID, color);
+            boolean isWhiteView = color.equals("WHITE");
+            showBoard(isWhiteView);
             return "Joined game " + gameID + " as " + color;
 
         }
         throw new ClientException("Expected: <gameID> <WHITE|BLACK>");
+    }
+
+    public void showBoard(boolean isWhite){
+        ChessBoard.drawChessBoard(out, isWhite);
     }
 
     public String observe(String... params) throws ClientException{
@@ -171,6 +183,7 @@ public class Menu {
             int gameID = Integer.parseInt(params[0]);
             server.joinGame(authToken, gameID, null);
 
+            showBoard(true);
             return "Observing " + gameID;
         }
         throw new ClientException("Expected: <gameName");
