@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 
 import dataclasses.AuthData;
 import handler.RegisterRequest;
@@ -45,5 +46,33 @@ public class ServerFacade {
         } else {
             return BodyPublishers.noBody();
         }
+    }
+
+    private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException{
+        try{
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+
+        }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass){
+        int status = response.statusCode();
+        if(!isSuccessful(status)){
+            String body = response.body();
+            if(body != null){
+                throw
+            }
+            throw
+        }
+        if(responseClass != null){
+            return new Gson().fromJson(response.body(), responseClass);
+        }
+        return null;
+    }
+
+    private boolean isSuccessful(int status) {
+
+        return status / 100 == 2;
     }
 }
