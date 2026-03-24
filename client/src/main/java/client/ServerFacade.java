@@ -8,9 +8,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 
 import dataclasses.AuthData;
-import handler.LoginRequest;
-import handler.LogoutRequest;
-import handler.RegisterRequest;
+import dataclasses.GameData;
+import dataclasses.UserData;
+import handler.*;
 import com.google.gson.Gson;
 
 
@@ -23,11 +23,11 @@ public class ServerFacade {
         this.url = url;
     }
 
-    public AuthData register(String username, String password, String email) throws ClientException{
+    public UserData register(String username, String password, String email) throws ClientException{
         var requestData = new RegisterRequest(username, password, email);
         var request = buildRequest("Post", "/user", requestData, null);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        return handleResponse(response, UserData.class);
     }
 
     public AuthData login(String username, String password) throws ClientException{
@@ -35,6 +35,26 @@ public class ServerFacade {
         var request = buildRequest("POST", "/session", requestData, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
+    }
+
+    public void logout(String authToken) throws ClientException{
+        var request = buildRequest("DELETE", "/session", null, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    public GameData createGame(String authToken, String gameName) throws ClientException{
+        var requestData = new CreateGameRequest(gameName);
+        var request = buildRequest("POST", "/game", requestData, authToken);
+        var response = sendRequest(request);
+        return handleResponse(response, GameData.class);
+    }
+
+    public void joinGame(String authToken, int gameId, String color) throws ClientException{
+        var requestData = new JoinGameRequest(color, gameId);
+        var request = buildRequest("PUT", "/game", requestData, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
