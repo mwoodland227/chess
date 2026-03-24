@@ -2,6 +2,7 @@ package client;
 
 import dataclasses.AuthData;
 import dataclasses.GameData;
+import dataclasses.UserData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -101,8 +102,9 @@ public class Menu {
             username = params[0];
             password = params[1];
             email = params[2];
+            UserData user = server.register(username, password, email);
 
-            return "User " + username + "registered";
+            return "User " + user.username() + "registered";
         }
         throw new ClientException("Expected: <username> <password> <email>");
     }
