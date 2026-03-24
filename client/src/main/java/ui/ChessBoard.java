@@ -90,6 +90,39 @@ public class ChessBoard {
         setBlack(out);
     }
 
+    private static String getPiece(int row, int col){
+        if(row == 0){
+            return switch (col){
+                case 0, 7 -> WHITE_ROOK;
+                case 1, 6 -> WHITE_KNIGHT;
+                case 2,5 -> WHITE_BISHOP;
+                case 3 -> WHITE_QUEEN;
+                case 4 -> WHITE_KING;
+                default -> "   ";
+            };
+        }
+        if(row == 1){
+            return WHITE_PAWN;
+        }
+
+        if(row == 7){
+            return switch (col){
+                case 0, 7 -> BLACK_ROOK;
+                case 1, 6 -> BLACK_KNIGHT;
+                case 2,5 -> BLACK_BISHOP;
+                case 3 -> BLACK_QUEEN;
+                case 4 -> BLACK_KING;
+                default -> "   ";
+            };
+        }
+        if(row == 6){
+            return BLACK_PAWN;
+        }
+
+        return "   ";
+
+    }
+
     private static void drawSquareRow(PrintStream out, int row){
         for(int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow){
             out.print(SET_TEXT_COLOR_GREEN);
@@ -111,6 +144,9 @@ public class ChessBoard {
                 }
 
                 out.print(square);
+
+                String piece = getPiece(row, col);
+                out.print(piece);
 
                 if(col < BOARD_SIZE_IN_SQUARES -1){
                     setRed(out);
