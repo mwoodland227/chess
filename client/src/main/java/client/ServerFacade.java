@@ -60,7 +60,7 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
-    public List<GameData> listGame(String authToken) throws ClientException{
+    public List<GameData> listGames(String authToken) throws ClientException{
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);

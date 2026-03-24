@@ -1,15 +1,25 @@
 package client;
 
+import dataclasses.AuthData;
+import dataclasses.GameData;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
 public class Menu {
+    private final ServerFacade server;
     private State state = State.SIGNEDOUT;
     private String username;
     private String password;
     private String email;
+    private String authToken;
+
+    public Menu(String serverUrl){
+        server = new ServerFacade(serverUrl);
+    }
 
     public void readEval() {
         System.out.println("Welcome to Chess. Sign in to start.");
@@ -69,6 +79,9 @@ public class Menu {
             username = params[0];
             password = params[1];
 
+            AuthData auth = server.login(username, password);
+            authToken = auth.authToken();
+
             state = State.SIGNEDIN;
 
             return "Logged in as " + username;
@@ -119,8 +132,20 @@ public class Menu {
         throw new ClientException("Expected: <gameName>");
     }
 
-    public String listGames(){
-        return "list of games";
+    public String listGames() throws ClientException {
+        List<GameData> games = server.listGames(authToken);
+        if(games.isEmpty()){
+            return "No games available.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("List of games: \n");
+        for(int i = 0; i < games.size(); i++){
+            GameData game = games.get(i);
+            sb.append(" ").append(i+1).append(". ").append(game.gameName()).append("\n");
+
+        }
+        return sb.toString();
     }
 
     public String play(String... params) throws ClientException{
