@@ -98,7 +98,7 @@ public class ChessBoard {
                 case 2,5 -> WHITE_BISHOP;
                 case 3 -> WHITE_QUEEN;
                 case 4 -> WHITE_KING;
-                default -> "   ";
+                default -> EMPTY;
             };
         }
         if(row == 1){
@@ -112,14 +112,14 @@ public class ChessBoard {
                 case 2,5 -> BLACK_BISHOP;
                 case 3 -> BLACK_QUEEN;
                 case 4 -> BLACK_KING;
-                default -> "   ";
+                default -> EMPTY;
             };
         }
         if(row == 6){
             return BLACK_PAWN;
         }
 
-        return "   ";
+        return EMPTY;
 
     }
 

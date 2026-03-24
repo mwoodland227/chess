@@ -14,6 +14,8 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
+
+
 public class Menu {
     private final ServerFacade server;
     private final PrintStream out;
@@ -22,6 +24,7 @@ public class Menu {
     private String password;
     private String email;
     private String authToken;
+    private List<GameData> lastGames;
 
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
@@ -142,24 +145,41 @@ public class Menu {
     }
 
     public String listGames() throws ClientException {
-        List<GameData> games = server.listGames(authToken);
-        if(games.isEmpty()){
+        lastGames = server.listGames(authToken);
+        if(lastGames.isEmpty()){
             return "No games available.";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("List of games: \n");
-        for(int i = 0; i < games.size(); i++){
-            GameData game = games.get(i);
-            sb.append(" ").append(i+1).append(". ").append(game.gameName()).append("\n");
+        for(int i = 0; i < lastGames.size(); i++){
+            GameData game = lastGames.get(i);
+            sb.append(" ").append(i+1).append(". ").append(game.gameName()).append(" (White: ");
+            if(game.whiteUsername() != null){
+                sb.append(game.whiteUsername());
+            } else{
+                sb.append("Unassigned");
+            }
 
+            sb.append(", Black: ");
+            if(game.blackUsername() != null) {
+                sb.append(game.blackUsername());
+            } else {
+                sb.append("Unassigned");
+            }
+            sb.append(")\n");
         }
         return sb.toString();
     }
 
     public String play(String... params) throws ClientException{
         if (params.length == 2){
-            int gameID = Integer.parseInt(params[0]);
+            int id = Integer.parseInt(params[0]) - 1;
+            if(lastGames == null || id < 0 || id >= lastGames.size()){
+                throw new ClientException("list games first");
+            }
+
+            int gameID = lastGames.get(id).gameID();
             String color = params[1].toUpperCase();
 
             if(!color.equals("WHITE") && !color.equals("BLACK")){
@@ -171,7 +191,7 @@ public class Menu {
             return "Joined game " + gameID + " as " + color;
 
         }
-        throw new ClientException("Expected: <gameID> <WHITE|BLACK>");
+        throw new ClientException("Expected: <gameIndex> <WHITE|BLACK>");
     }
 
     public void showBoard(boolean isWhite){
@@ -180,13 +200,18 @@ public class Menu {
 
     public String observe(String... params) throws ClientException{
         if(params.length == 1){
-            int gameID = Integer.parseInt(params[0]);
+            int id = Integer.parseInt(params[0]) - 1;
+            if(lastGames == null || id < 0 || id >= lastGames.size()){
+                throw new ClientException("list games first");
+            }
+
+            int gameID = lastGames.get(id).gameID();
             server.joinGame(authToken, gameID, null);
 
             showBoard(true);
             return "Observing " + gameID;
         }
-        throw new ClientException("Expected: <gameName");
+        throw new ClientException("Expected: <gameIndex>");
     }
 
 }
