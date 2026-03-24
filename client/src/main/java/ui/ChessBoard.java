@@ -133,5 +133,14 @@ public class ChessBoard {
         }
     }
 
+    private static void setRed(PrintStream out){
+        out.print(SET_BG_COLOR_RED);
+        out.print(SET_TEXT_COLOR_RED);
+    }
+
+    private static void setBlack(PrintStream out){
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
 
 }
