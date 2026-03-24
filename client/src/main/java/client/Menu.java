@@ -151,29 +151,25 @@ public class Menu {
 
     public String play(String... params) throws ClientException{
         if (params.length == 2){
+            int gameID = Integer.parseInt(params[0]);
             String color = params[1].toUpperCase();
 
-            try{
-                int gameID = Integer.parseInt(params[0]);
-                if(color.equals("WHITE") || color.equals("BLACK")){
-                    return "joining " + gameID +" as" + color;
-                }
-                throw new ClientException("Color must be WHITE or BLACK.");
-            } catch (NumberFormatException e) {
-                throw new ClientException("Game ID must be an integer.");
+            if(!color.equals("WHITE") && !color.equals("BLACK")){
+                throw new ClientException("Color must be BLACK or WHITE.");
             }
+            server.joinGame(authToken, gameID, color);
+            return "Joined game " + gameID + " as " + color;
+
         }
         throw new ClientException("Expected: <gameID> <WHITE|BLACK>");
     }
 
     public String observe(String... params) throws ClientException{
         if(params.length == 1){
-            try{
-                int gameID = Integer.parseInt(params[0]);
-                return "observing " + gameID;
-            } catch (NumberFormatException e){
-                throw new ClientException("Game ID must be an integer.");
-            }
+            int gameID = Integer.parseInt(params[0]);
+            server.joinGame(authToken, gameID, null);
+
+            return "Observing " + gameID;
         }
         throw new ClientException("Expected: <gameName");
     }

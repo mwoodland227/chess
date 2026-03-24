@@ -53,8 +53,8 @@ public class ServerFacade {
         return handleResponse(response, GameData.class);
     }
 
-    public void joinGame(String authToken, int gameId, String color) throws ClientException{
-        var requestData = new JoinGameRequest(color, gameId);
+    public void joinGame(String authToken, int gameID, String color) throws ClientException{
+        var requestData = new JoinGameRequest(color, gameID);
         var request = buildRequest("PUT", "/game", requestData, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
