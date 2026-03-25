@@ -21,7 +21,7 @@ public class ChessBoard {
     public static void main(String[] args){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        drawHeaders(out);
+//        drawHeaders(out);
         drawChessBoard(out, true);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -98,7 +98,12 @@ public class ChessBoard {
     private static void drawSquareRow(PrintStream out, int row){
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             boolean isLight = ((row + col) % 2 == 0);
-            String square = isLight ? LIGHT : DARK;
+            String square;
+            if(isLight) {
+                square = LIGHT;
+            } else{
+                square = DARK;
+            }
             String piece = getPiece(row, col);
 
             out.print(square);
@@ -118,11 +123,6 @@ public class ChessBoard {
         out.println();
     }
 
-
-//    private static void setRed(PrintStream out){
-//        out.print(SET_BG_COLOR_RED);
-//        out.print(SET_TEXT_COLOR_RED);
-//    }
 
     private static void setBlack(PrintStream out){
         out.print(SET_BG_COLOR_BLACK);
