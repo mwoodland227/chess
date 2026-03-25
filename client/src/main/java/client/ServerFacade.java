@@ -68,12 +68,13 @@ public class ServerFacade {
     public List<GameData> listGames(String authToken) throws ClientException{
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
+
         String message = "bad request";
         handleResponse(response, null, message);
 
         String body = response.body();
-        Type listGames = new TypeToken<List<GameData>>(){}.getType();
-        return new Gson().fromJson(body, listGames);
+        ListGamesResponse responseObj = new Gson().fromJson(body, ListGamesResponse.class);
+        return responseObj.games();
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

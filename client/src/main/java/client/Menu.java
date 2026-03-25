@@ -69,9 +69,9 @@ public class Menu {
                     default -> help();
                 };
                 case SIGNEDIN -> switch (cmd) {
-                    case "createGame" -> createGame(params);
-                    case "listGames" -> listGames();
-                    case "play" -> play(params);
+                    case "creategame" -> createGame(params);
+                    case "listgames" -> listGames();
+                    case "playgame" -> play(params);
                     case "observe" -> observe(params);
                     case "logout" -> logout();
                     case "help" -> help();
@@ -115,6 +115,9 @@ public class Menu {
             password = params[1];
             email = params[2];
             UserData user = server.register(username, password, email);
+            AuthData auth = server.login(username, password);
+            authToken = auth.authToken();
+            state = State.SIGNEDIN;
 
             return "User " + user.username() + " registered";
         }
@@ -130,9 +133,9 @@ public class Menu {
                     - quit
                     """;
             case SIGNEDIN -> """
-                    - createGame <gameName>
-                    - listGames
-                    - playGame <gameID> <color, white or black>
+                    - creategame <gameName>
+                    - listgames
+                    - playgame <gameID> <color, white or black>
                     - observe <gameID>
                     """;
         };
@@ -209,7 +212,7 @@ public class Menu {
             }
 
             int gameID = lastGames.get(id).gameID();
-            server.joinGame(authToken, gameID, null);
+            server.joinGame(authToken, gameID, "WHITE");
 
             showBoard(true);
             return "Observing " + gameID;
