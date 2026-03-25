@@ -136,6 +136,8 @@ public class Menu {
                     - listgames
                     - playgame <gameID> <color, white or black>
                     - observe <gameID>
+                    - logout
+                    - quit
                     """;
         };
     }
@@ -179,7 +181,8 @@ public class Menu {
 
     public String play(String... params) throws ClientException{
         if (params.length == 2){
-            int id = Integer.parseInt(params[0]) - 1;
+            int id = checkGameIndex(params[0]);
+
             if(lastGames == null || id < 0 || id >= lastGames.size()){
                 throw new ClientException("list games first");
             }
@@ -205,14 +208,22 @@ public class Menu {
 
     public String observe(String... params) throws ClientException{
         if(params.length == 1){
-            int id = Integer.parseInt(params[0]) - 1;
+            int id = checkGameIndex(params[0]);
             if(lastGames == null || id < 0 || id >= lastGames.size()){
                 throw new ClientException("bad gameID");
             }
             showBoard(true);
-            return "Observing " + id;
+            return "Observing ";
         }
         throw new ClientException("Expected <gameIndex>");
+    }
+
+    private int checkGameIndex(String param) throws ClientException {
+        try {
+            return Integer.parseInt(param) - 1;
+        } catch (NumberFormatException e) {
+            throw new ClientException("Expected integer gameIndex");
+        }
     }
 
 }

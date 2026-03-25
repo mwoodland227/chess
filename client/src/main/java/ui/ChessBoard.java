@@ -34,7 +34,7 @@ public class ChessBoard {
         String cols = iSWhite ? WHITECOL : BLACKCOL;
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             out.print(SET_TEXT_COLOR_GREEN);
-            out.print(" " + cols.charAt(col) + "  ");
+            out.print(" " + cols.charAt(col) + " ");
             setBlack(out);
         }
         out.println();
@@ -53,7 +53,7 @@ public class ChessBoard {
             }
             char rowName = ROWS.charAt(row);
             drawRowName(out, rowName);
-            drawSquareRow(out, row);
+            drawSquareRow(out, row, isWhite);
 
         }
     }
@@ -65,7 +65,7 @@ public class ChessBoard {
     }
 
     private static String getPiece(int row, int col){
-        if(row == 0 || row == 7){
+        if(row == 0){
             return switch (col){
                 case 0, 7 -> "R";
                 case 1, 6 -> "N";
@@ -75,38 +75,64 @@ public class ChessBoard {
                 default -> EMPTY;
             };
         }
-        if(row == 1 || row == 6){
+        if(row == 1){
             return "P";
+        }
+
+        if(row == 7){
+            return switch (col){
+                case 0, 7 -> "r";
+                case 1, 6 -> "n";
+                case 2,5 -> "b";
+                case 3 -> "q";
+                case 4 -> "k";
+                default -> EMPTY;
+            };
+        }
+        if(row == 6){
+            return "p";
         }
 
         return EMPTY;
 
     }
 
-    private static void drawSquareRow(PrintStream out, int row){
-        for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
-            boolean isLight = ((row + col) % 2 == 0);
-            String square;
-            if(isLight) {
-                square = LIGHT;
-            } else{
-                square = DARK;
-            }
-            String piece = getPiece(row, col);
+    private static void drawSquareRow(PrintStream out, int row, boolean isWhite){
+        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+            int col = isWhite ? boardCol : BOARD_SIZE_IN_SQUARES - 1 - boardCol;
 
+            boolean isLight = ((row + col) % 2 != 0);
+
+            String square = isLight ? LIGHT : DARK;
+
+            String piece = getPiece(row, col);
             out.print(square);
+//            out.print(square);
+
+            if(isLight) {
+                out.print(SET_BG_COLOR_WHITE);
+            } else{
+                out.print(SET_BG_COLOR_BLACK);
+            }
+
             if (!piece.equals(EMPTY)) {
-                out.print(SET_TEXT_COLOR_RED);
+                boolean isWhitePiece = Character.isUpperCase(piece.charAt(0));
+                if(isWhitePiece){
+                    out.print(SET_TEXT_COLOR_RED);
+                } else{
+                    out.print(SET_TEXT_COLOR_BLUE);
+
+                }
+
+
                 out.print(piece);
+//                out.print(square);
                 out.print(SET_TEXT_COLOR_BLACK);
             } else {
                 out.print(" ");
             }
             out.print(square);
 
-            if (col < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print("│");
-            }
         }
         out.println();
     }

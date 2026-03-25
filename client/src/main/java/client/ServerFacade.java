@@ -59,7 +59,7 @@ public class ServerFacade {
         var requestData = new JoinGameRequest(color, gameID);
         var request = buildRequest("PUT", "/game", requestData, authToken);
         var response = sendRequest(request);
-        String body = "bad request";
+        String body = "color already taken";
         handleResponse(response, null, body);
     }
 
