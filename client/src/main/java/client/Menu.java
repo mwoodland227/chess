@@ -143,8 +143,8 @@ public class Menu {
     public String createGame(String... params) throws ClientException{
         if(params.length == 1){
             String gameName = params[0];
-            GameData game = server.createGame(authToken, gameName);
-            return "Game: " + game.gameName() + " created.";
+            server.createGame(authToken, gameName);
+            return "Game: " + gameName + " created.";
         }
         throw new ClientException("Expected <gameName>");
     }
