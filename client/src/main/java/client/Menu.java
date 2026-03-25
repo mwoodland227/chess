@@ -145,7 +145,7 @@ public class Menu {
         if(params.length == 1){
             String gameName = params[0];
             GameData game = server.createGame(authToken, gameName);
-            return "Game: " + game.gameName() + " (ID: " +game.gameID() + ") created.";
+            return "Game: " + gameName + " (ID: " +game.gameID() + ") created.";
         }
         throw new ClientException("Expected <gameName>");
     }
@@ -189,7 +189,7 @@ public class Menu {
             String color = params[1].toUpperCase();
 
             if(!color.equals("WHITE") && !color.equals("BLACK")){
-                throw new ClientException("Color must be BLACK or WHITE.");
+                throw new ClientException("Color must be black or white.");
             }
             server.joinGame(authToken, gameID, color);
             boolean isWhiteView = color.equals("WHITE");
@@ -210,12 +210,8 @@ public class Menu {
             if(lastGames == null || id < 0 || id >= lastGames.size()){
                 throw new ClientException("bad gameID");
             }
-
-            int gameID = lastGames.get(id).gameID();
-            server.joinGame(authToken, gameID, "WHITE");
-
             showBoard(true);
-            return "Observing " + gameID;
+            return "Observing " + id;
         }
         throw new ClientException("Expected <gameIndex>");
     }

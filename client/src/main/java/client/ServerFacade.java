@@ -28,7 +28,7 @@ public class ServerFacade {
 
     public UserData register(String username, String password, String email) throws ClientException{
         var requestData = new RegisterRequest(username, password, email);
-        var request = buildRequest("Post", "/user", requestData, null);
+        var request = buildRequest("POST", "/user", requestData, null);
         var response = sendRequest(request);
         String body = "already taken";
         return handleResponse(response, UserData.class, body);
@@ -65,6 +65,7 @@ public class ServerFacade {
         handleResponse(response, null, body);
     }
 
+
     public List<GameData> listGames(String authToken) throws ClientException{
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
@@ -77,7 +78,7 @@ public class ServerFacade {
         return responseObj.games();
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
+    public HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url + path))
                 .method(method, makeRequestBody(body));
         if(body != null){
@@ -97,7 +98,7 @@ public class ServerFacade {
         }
     }
 
-    private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException{
+    public HttpResponse<String> sendRequest(HttpRequest request) throws ClientException{
         try{
             return client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {

@@ -30,12 +30,11 @@ public class ServerFacadeTests {
     }
 
 
-//    @BeforeEach
-//    void clearData(){
-//        try{
-//            facade.register("cleanTest", "cleanPass", "clean@g");
-//        } catch(Exception ignored){}
-//    }
+    @BeforeEach
+    void clearData() throws ClientException {
+        var request = facade.buildRequest("DELETE", "/db", null, "none");
+        facade.sendRequest(request);
+    }
 
     @Test
     void registerPositive() throws ClientException{
@@ -85,8 +84,8 @@ public class ServerFacadeTests {
     void createGamePositive() throws ClientException {
         facade.register("create", "pass", "c@g");
         var auth = facade.login("create", "pass");
-        GameData game = facade.createGame(auth.authToken(), "testGame");
-        assertEquals("testGame", game.gameName());
+        GameData game = facade.createGame(auth.authToken(), "testing");
+        assertEquals("testing", game.gameName());
         assertTrue(game.gameID() > 0);
     }
 
@@ -97,7 +96,7 @@ public class ServerFacadeTests {
 
     @Test
     void listGamePositive() throws ClientException{
-        facade.register("list1", "pass", "list@g");
+        facade.register("list", "pass", "list@g");
         var auth = facade.login("list", "pass");
         facade.createGame(auth.authToken(), "listGame");
         var games = facade.listGames(auth.authToken());
