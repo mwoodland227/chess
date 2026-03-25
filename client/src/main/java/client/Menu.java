@@ -96,10 +96,13 @@ public class Menu {
 
             return "Logged in as " + username;
         }
-        throw new ClientException("Expected: <username> <password>");
+        throw new ClientException("Expected <username> <password>");
     }
 
-    public String logout() {
+    public String logout() throws ClientException {
+        if(authToken != null){
+            server.logout(authToken);
+        }
         state = State.SIGNEDOUT;
         username = null;
         password = null;
@@ -115,7 +118,7 @@ public class Menu {
 
             return "User " + user.username() + " registered";
         }
-        throw new ClientException("Expected: <username> <password> <email>");
+        throw new ClientException("Expected <username> <password> <email>");
     }
 
     public String help(){
@@ -141,7 +144,7 @@ public class Menu {
             GameData game = server.createGame(authToken, gameName);
             return "Game: " + game.gameName() + " (ID: " +game.gameID() + ") created.";
         }
-        throw new ClientException("Expected: <gameName>");
+        throw new ClientException("Expected <gameName>");
     }
 
     public String listGames() throws ClientException {
@@ -191,7 +194,7 @@ public class Menu {
             return "Joined game " + gameID + " as " + color;
 
         }
-        throw new ClientException("Expected: <gameIndex> <WHITE|BLACK>");
+        throw new ClientException("Expected <gameIndex> <WHITE|BLACK>");
     }
 
     public void showBoard(boolean isWhite){
@@ -202,7 +205,7 @@ public class Menu {
         if(params.length == 1){
             int id = Integer.parseInt(params[0]) - 1;
             if(lastGames == null || id < 0 || id >= lastGames.size()){
-                throw new ClientException("list games first");
+                throw new ClientException("bad gameID");
             }
 
             int gameID = lastGames.get(id).gameID();
@@ -211,7 +214,7 @@ public class Menu {
             showBoard(true);
             return "Observing " + gameID;
         }
-        throw new ClientException("Expected: <gameIndex>");
+        throw new ClientException("Expected <gameIndex>");
     }
 
 }

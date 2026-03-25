@@ -30,40 +30,46 @@ public class ServerFacade {
         var requestData = new RegisterRequest(username, password, email);
         var request = buildRequest("Post", "/user", requestData, null);
         var response = sendRequest(request);
-        return handleResponse(response, UserData.class);
+        String body = "already taken";
+        return handleResponse(response, UserData.class, body);
     }
 
     public AuthData login(String username, String password) throws ClientException{
         var requestData = new LoginRequest(username, password);
         var request = buildRequest("POST", "/session", requestData, null);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        String body = "bad request";
+        return handleResponse(response, AuthData.class, body);
     }
 
     public void logout(String authToken) throws ClientException{
         var request = buildRequest("DELETE", "/session", null, authToken);
         var response = sendRequest(request);
-        handleResponse(response, null);
+        String body = "bad request";
+        handleResponse(response, null, body);
     }
 
     public GameData createGame(String authToken, String gameName) throws ClientException{
         var requestData = new CreateGameRequest(gameName);
         var request = buildRequest("POST", "/game", requestData, authToken);
         var response = sendRequest(request);
-        return handleResponse(response, GameData.class);
+        String body = "bad request";
+        return handleResponse(response, GameData.class, body);
     }
 
     public void joinGame(String authToken, int gameID, String color) throws ClientException{
         var requestData = new JoinGameRequest(color, gameID);
         var request = buildRequest("PUT", "/game", requestData, authToken);
         var response = sendRequest(request);
-        handleResponse(response, null);
+        String body = "bad request";
+        handleResponse(response, null, body);
     }
 
     public List<GameData> listGames(String authToken) throws ClientException{
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
-        handleResponse(response, null);
+        String message = "bad request";
+        handleResponse(response, null, message);
 
         String body = response.body();
         Type listGames = new TypeToken<List<GameData>>(){}.getType();
@@ -98,12 +104,12 @@ public class ServerFacade {
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException{
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass, String body) throws ClientException{
         int status = response.statusCode();
         if(!isSuccessful(status)){
-            String body = response.body();
-            if(body != null){
-                throw new ClientException("Server error: " + body);
+            String serverError = response.body();
+            if(serverError != null){
+                throw new ClientException(body);
             }
             throw new ClientException("HTTP " + status);
         }
