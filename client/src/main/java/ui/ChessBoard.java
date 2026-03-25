@@ -7,8 +7,8 @@ import static ui.EscapeSequences.*;
 public class ChessBoard {
     // board dimensions
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
+//    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
+//    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
 
     // padded characters
     private static final String EMPTY = " ";
@@ -29,48 +29,18 @@ public class ChessBoard {
 
     private static void drawHeaders(PrintStream out){
         setBlack(out);
-        drawColHeaders(out);
-        out.println();
-    }
-
-    private static void drawColHeaders(PrintStream out){
-//        out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS /2));
-        out.print(" ");
-
+        out.print("  ");
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             out.print(SET_TEXT_COLOR_GREEN);
-            out.print(COLS.charAt(col));
-            out.print(" ");
+            out.print(" " + COLS.charAt(col) + "  ");
             setBlack(out);
-
-            if (col < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print("│");
-            }
         }
         out.println();
     }
 
-//    private static void drawColHeader(PrintStream out, char colName){
-//        out.print(" ");
-//        for(int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col){
-//            char c = COLS.charAt(col);
-//            out.print(SET_TEXT_COLOR_GREEN);
-//            out.print(" " + c + " ");
-//            setBlack(out);
-//            if(col < BOARD_SIZE_IN_SQUARES -1){
-//                out.print("|");
-//            }
-//        }
-//        out.println();
-//    }
-
-//    private static void printColName(PrintStream out, char name){
-//        out.print(SET_TEXT_COLOR_GREEN);
-//        out.print(name);
-//        setBlack(out);
-//    }
 
     public static void  drawChessBoard(PrintStream out, boolean isWhite){
+        drawHeaders(out);
         setBlack(out);
         for(int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow){
             int row;
@@ -83,12 +53,7 @@ public class ChessBoard {
             drawRowName(out, rowName);
             drawSquareRow(out, row);
 
-//            if(boardRow < BOARD_SIZE_IN_SQUARES -1){
-//                drawHorizontalLine(out);
-//                setBlack(out);
-//            }
         }
-//        drawColHeaders(out);
     }
 
     private static void drawRowName(PrintStream out, char name){
@@ -138,7 +103,7 @@ public class ChessBoard {
 
             out.print(square);
             if (!piece.equals(EMPTY)) {
-                out.print(SET_TEXT_COLOR_WHITE);
+                out.print(SET_TEXT_COLOR_RED);
                 out.print(piece);
                 out.print(SET_TEXT_COLOR_BLACK);
             } else {
@@ -147,29 +112,17 @@ public class ChessBoard {
             out.print(square);
 
             if (col < BOARD_SIZE_IN_SQUARES - 1) {
-                setRed(out);
                 out.print("│");
-                setBlack(out);
             }
         }
         out.println();
     }
 
-//    private static void drawHorizontalLine(PrintStream out){
-//        int boardWidthInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_PADDED_CHARS +
-//                (BOARD_SIZE_IN_SQUARES-1) * LINE_WIDTH_IN_PADDED_CHARS;
-//        for(int lineRow = 0; lineRow < LINE_WIDTH_IN_PADDED_CHARS; ++ lineRow){
-//            setRed(out);
-//            out.print(EMPTY.repeat(boardWidthInSpaces));
-//            setBlack(out);
-//            out.println();
-//        }
-//    }
 
-    private static void setRed(PrintStream out){
-        out.print(SET_BG_COLOR_RED);
-        out.print(SET_TEXT_COLOR_RED);
-    }
+//    private static void setRed(PrintStream out){
+//        out.print(SET_BG_COLOR_RED);
+//        out.print(SET_TEXT_COLOR_RED);
+//    }
 
     private static void setBlack(PrintStream out){
         out.print(SET_BG_COLOR_BLACK);
