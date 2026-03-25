@@ -7,8 +7,7 @@ import static ui.EscapeSequences.*;
 public class ChessBoard {
     // board dimensions
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-//    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-//    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
+
 
     // padded characters
     private static final String EMPTY = " ";
@@ -16,20 +15,23 @@ public class ChessBoard {
     private static final String DARK = SET_BG_COLOR_DARK_GREY + EMPTY + RESET_BG_COLOR;
 
     private static final String ROWS = "12345678";
-    private static final String COLS = "abcdefgh";
+    private static final String WHITECOL = "abcdefgh";
+    private static final String BLACKCOL = "hgfedcba";
 
     static void main(String[] args){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
 //        drawHeaders(out);
-        drawChessBoard(out, true);
+        boolean isWhite = Boolean.parseBoolean(args[1]) ;
+        drawChessBoard(out, isWhite);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out){
+    private static void drawHeaders(PrintStream out, boolean iSWhite){
         setBlack(out);
         out.print("  ");
+        String COLS = iSWhite ? WHITECOL : BLACKCOL;
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             out.print(SET_TEXT_COLOR_GREEN);
             out.print(" " + COLS.charAt(col) + "  ");
@@ -40,7 +42,7 @@ public class ChessBoard {
 
 
     public static void  drawChessBoard(PrintStream out, boolean isWhite){
-        drawHeaders(out);
+        drawHeaders(out, isWhite);
         setBlack(out);
         for(int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow){
             int row;
