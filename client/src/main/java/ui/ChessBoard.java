@@ -31,10 +31,10 @@ public class ChessBoard {
     private static void drawHeaders(PrintStream out, boolean iSWhite){
         setBlack(out);
         out.print("  ");
-        String COLS = iSWhite ? WHITECOL : BLACKCOL;
+        String cols = iSWhite ? WHITECOL : BLACKCOL;
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             out.print(SET_TEXT_COLOR_GREEN);
-            out.print(" " + COLS.charAt(col) + "  ");
+            out.print(" " + cols.charAt(col) + "  ");
             setBlack(out);
         }
         out.println();
