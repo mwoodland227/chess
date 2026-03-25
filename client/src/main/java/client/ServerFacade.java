@@ -1,6 +1,5 @@
 package client;
 
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,7 +8,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.util.List;
 
-import com.google.gson.reflect.TypeToken;
 import dataclasses.AuthData;
 import dataclasses.GameData;
 import dataclasses.UserData;

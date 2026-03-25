@@ -22,7 +22,6 @@ public class Menu {
     private State state = State.SIGNEDOUT;
     private String username;
     private String password;
-    private String email;
     private String authToken;
     private List<GameData> lastGames;
 
@@ -113,7 +112,7 @@ public class Menu {
         if (params.length == 3){
             username = params[0];
             password = params[1];
-            email = params[2];
+            String email = params[2]; // maybe undo this
             UserData user = server.register(username, password, email);
             AuthData auth = server.login(username, password);
             authToken = auth.authToken();
