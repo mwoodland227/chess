@@ -120,7 +120,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void joinGameNegative(){
+    void joinGameNegative() throws ClientException{
         facade.register("join1", "pass", "join1@g");
         var auth = facade.login("join1", "pass");
         assertThrows(ClientException.class, () -> facade.joinGame(auth.authToken(), 99999, "WHITE"));
