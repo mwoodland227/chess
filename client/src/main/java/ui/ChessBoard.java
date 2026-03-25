@@ -63,7 +63,7 @@ public class ChessBoard {
     }
 
     private static String getPiece(int row, int col){
-        if(row == 0){
+        if(row == 0 || row == 7){
             return switch (col){
                 case 0, 7 -> "R";
                 case 1, 6 -> "N";
@@ -73,21 +73,7 @@ public class ChessBoard {
                 default -> EMPTY;
             };
         }
-        if(row == 1){
-            return "P";
-        }
-
-        if(row == 7){
-            return switch (col){
-                case 0, 7 -> "R";
-                case 1, 6 -> "N";
-                case 2,5 -> "B";
-                case 3 -> "Q";
-                case 4 -> "K";
-                default -> EMPTY;
-            };
-        }
-        if(row == 6){
+        if(row == 1 || row == 6){
             return "P";
         }
 
