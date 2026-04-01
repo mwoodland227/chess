@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import client.websocket.WebSocketFacade;
 import ui.ChessBoard;
 
@@ -243,5 +244,9 @@ public class Menu {
 
     public void printError(String errorMessage) {
         out.println("\nError: " + errorMessage);
+    }
+
+    public void loadGame(ChessGame game) {
+        ChessBoard.drawChessBoard(out, game, true);
     }
 }

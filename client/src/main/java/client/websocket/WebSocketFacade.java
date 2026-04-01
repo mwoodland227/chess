@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -41,7 +42,8 @@ public class WebSocketFacade extends Endpoint{
                 menu.printError(error.getErrorMessage());
             }
             case LOAD_GAME -> {
-                menu.printNotification("LOAD_GAME received");
+                LoadGameMessage load = new Gson().fromJson(json, LoadGameMessage.class);
+                menu.loadGame(load.getGame());
             }
         }
     }
