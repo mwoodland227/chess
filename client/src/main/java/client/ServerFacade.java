@@ -76,6 +76,7 @@ public class ServerFacade {
         return responseObj.games();
     }
 
+
     public HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(url + path))
                 .method(method, makeRequestBody(body));
@@ -122,5 +123,9 @@ public class ServerFacade {
     private boolean isSuccessful(int status) {
 
         return status / 100 == 2;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

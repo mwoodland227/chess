@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.WebSocketFacade;
 import ui.ChessBoard;
 
 import dataclasses.AuthData;
@@ -24,6 +25,7 @@ public class Menu {
     private String password;
     private String authToken;
     private List<GameData> lastGames;
+    private WebSocketFacade ws;
 
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
@@ -212,8 +214,17 @@ public class Menu {
             if(lastGames == null || id < 0 || id >= lastGames.size()){
                 throw new ClientException("bad gameID");
             }
-            showBoard(true);
-            return "Observing ";
+//            showBoard(true);
+//            return "Observing ";
+            int gameID = lastGames.get(id).gameID();
+
+            try{
+                ws = new WebSocketFacade(server.getUrl(), this);
+                ws.connect(authToken, gameID);
+                return "Connecting to game " + gameID + " as observer.";
+            } catch (Exception e){
+                throw new ClientException("wasn't able to connect");
+            }
         }
         throw new ClientException("Expected <gameIndex>");
     }
@@ -226,4 +237,7 @@ public class Menu {
         }
     }
 
+    public void printNotification(String message) {
+        out.println("\n" + message);
+    }
 }
