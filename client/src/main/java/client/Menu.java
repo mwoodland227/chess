@@ -240,4 +240,8 @@ public class Menu {
     public void printNotification(String message) {
         out.println("\n" + message);
     }
+
+    public void printError(String errorMessage) {
+        out.println("\nError: " + errorMessage);
+    }
 }

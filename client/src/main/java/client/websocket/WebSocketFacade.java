@@ -4,6 +4,9 @@ import client.Menu;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,7 +30,20 @@ public class WebSocketFacade extends Endpoint{
     }
 
     private void handleMessage(String json) {
-        menu.printNotification("Received: " + json);
+        ServerMessage message = new Gson().fromJson(json, ServerMessage.class);
+        switch (message.getServerMessageType()){
+            case NOTIFICATION -> {
+                NotificationMessage note = new Gson().fromJson(json, NotificationMessage.class);
+                menu.printNotification(note.getNotification());
+            }
+            case ERROR -> {
+                ErrorMessage error = new Gson().fromJson(json, ErrorMessage.class);
+                menu.printError(error.getErrorMessage());
+            }
+            case LOAD_GAME -> {
+                menu.printNotification("LOAD_GAME received");
+            }
+        }
     }
 
     public void connect(String authToken, int gameID) throws IOException {
