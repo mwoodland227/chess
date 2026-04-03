@@ -2,12 +2,14 @@ package client;
 
 import chess.ChessGame;
 import client.websocket.WebSocketFacade;
+import jakarta.websocket.DeploymentException;
 import ui.ChessBoard;
 
 import dataclasses.AuthData;
 import dataclasses.GameData;
 import dataclasses.UserData;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -27,6 +29,7 @@ public class Menu {
     private String authToken;
     private List<GameData> lastGames;
     private WebSocketFacade ws;
+    private boolean isWhiteView = true;
 
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
@@ -197,17 +200,26 @@ public class Menu {
                 throw new ClientException("Color must be black or white.");
             }
             server.joinGame(authToken, gameID, color);
-            boolean isWhiteView = color.equals("WHITE");
-            showBoard(isWhiteView);
-            return "Joined game " + gameID + " as " + color;
+            isWhiteView = color.equals("WHITE");
+//            showBoard(isWhiteView);
+//            return "Joined game " + gameID + " as " + color;
+
+            try{
+                ws = new WebSocketFacade(server.getUrl(), this);
+                ws.connect(authToken, gameID);
+                return "Connecting to game " + gameID + " as " + color;
+            } catch (Exception e) {
+                throw new ClientException("wasn't able to connect");
+            }
+            // fix exception stuff
 
         }
         throw new ClientException("Expected <gameIndex> <WHITE|BLACK>");
     }
 
-    public void showBoard(boolean isWhite){
-        ChessBoard.drawChessBoard(out, isWhite);
-    }
+//    public void showBoard(ChessGame game, boolean isWhite){
+//        ChessBoard.drawChessBoard(out, isWhite, game);
+//    }
 
     public String observe(String... params) throws ClientException{
         if(params.length == 1){
@@ -218,6 +230,7 @@ public class Menu {
 //            showBoard(true);
 //            return "Observing ";
             int gameID = lastGames.get(id).gameID();
+            isWhiteView = true;
 
             try{
                 ws = new WebSocketFacade(server.getUrl(), this);
@@ -247,6 +260,6 @@ public class Menu {
     }
 
     public void loadGame(ChessGame game) {
-        ChessBoard.drawChessBoard(out, game, true);
+        ChessBoard.drawChessBoard(out, isWhiteView, game);
     }
 }

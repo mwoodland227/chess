@@ -1,4 +1,6 @@
 package ui;
+import chess.ChessGame;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -41,7 +43,7 @@ public class ChessBoard {
     }
 
 
-    public static void  drawChessBoard(PrintStream out, boolean isWhite){
+    public static void  drawChessBoard(PrintStream out, boolean isWhite, ChessGame game){
         drawHeaders(out, isWhite);
         setBlack(out);
         for(int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow){
