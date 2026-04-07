@@ -1,5 +1,7 @@
 package ui;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +27,9 @@ public class ChessBoard {
         out.print(ERASE_SCREEN);
 //        drawHeaders(out);
         boolean isWhite = Boolean.parseBoolean(args[1]) ;
-        drawChessBoard(out, isWhite);
+
+        ChessGame game = new ChessGame();
+        drawChessBoard(out, isWhite, game);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
@@ -55,7 +59,7 @@ public class ChessBoard {
             }
             char rowName = ROWS.charAt(row);
             drawRowName(out, rowName);
-            drawSquareRow(out, row, isWhite);
+            drawSquareRow(out, row, isWhite, game);
 
         }
     }
@@ -66,40 +70,41 @@ public class ChessBoard {
         setBlack(out);
     }
 
-    private static String getPiece(int row, int col){
-        if(row == 0){
-            return switch (col){
-                case 0, 7 -> "R";
-                case 1, 6 -> "N";
-                case 2,5 -> "B";
-                case 3 -> "Q";
-                case 4 -> "K";
-                default -> EMPTY;
-            };
-        }
-        if(row == 1){
-            return "P";
-        }
+//    private static String getPiece(int row, int col){
+//        if(row == 0){
+//            return switch (col){
+//                case 0, 7 -> "R";
+//                case 1, 6 -> "N";
+//                case 2,5 -> "B";
+//                case 3 -> "Q";
+//                case 4 -> "K";
+//                default -> EMPTY;
+//            };
+//        }
+//        if(row == 1){
+//            return "P";
+//        }
+//
+//        if(row == 7){
+//            return switch (col){
+//                case 0, 7 -> "r";
+//                case 1, 6 -> "n";
+//                case 2,5 -> "b";
+//                case 3 -> "q";
+//                case 4 -> "k";
+//                default -> EMPTY;
+//            };
+//        }
+//        if(row == 6){
+//            return "p";
+//        }
+//
+//        return EMPTY;
+//
+//    }
+    // the old hard coded board pieces
 
-        if(row == 7){
-            return switch (col){
-                case 0, 7 -> "r";
-                case 1, 6 -> "n";
-                case 2,5 -> "b";
-                case 3 -> "q";
-                case 4 -> "k";
-                default -> EMPTY;
-            };
-        }
-        if(row == 6){
-            return "p";
-        }
-
-        return EMPTY;
-
-    }
-
-    private static void drawSquareRow(PrintStream out, int row, boolean isWhite){
+    private static void drawSquareRow(PrintStream out, int row, boolean isWhite, ChessGame game){
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             int col = isWhite ? boardCol : BOARD_SIZE_IN_SQUARES - 1 - boardCol;
 
@@ -107,9 +112,11 @@ public class ChessBoard {
 
             String square = isLight ? LIGHT : DARK;
 
-            String piece = getPiece(row, col);
+            ChessPosition position = new ChessPosition(row + 1, col + 1);
+            ChessPiece piece = game.getBoard().getPiece(position);
+            String pieceText = getPieceString(piece);
+
             out.print(square);
-//            out.print(square);
 
             if(isLight) {
                 out.print(SET_BG_COLOR_WHITE);
@@ -117,8 +124,8 @@ public class ChessBoard {
                 out.print(SET_BG_COLOR_BLACK);
             }
 
-            if (!piece.equals(EMPTY)) {
-                boolean isWhitePiece = Character.isUpperCase(piece.charAt(0));
+            if (!pieceText.equals(EMPTY)) {
+                boolean isWhitePiece = Character.isUpperCase(pieceText.charAt(0));
                 if(isWhitePiece){
                     out.print(SET_TEXT_COLOR_RED);
                 } else{
@@ -127,8 +134,7 @@ public class ChessBoard {
                 }
 
 
-                out.print(piece);
-//                out.print(square);
+                out.print(pieceText);
                 out.print(SET_TEXT_COLOR_BLACK);
             } else {
                 out.print(" ");
@@ -137,6 +143,21 @@ public class ChessBoard {
 
         }
         out.println();
+    }
+
+    private static String getPieceString(ChessPiece piece) {
+        if (piece == null) {
+            return EMPTY;
+        }
+
+        return switch (piece.getPieceType()) {
+            case KING -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "K" : "k";
+            case QUEEN -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "Q" : "q";
+            case ROOK -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "R" : "r";
+            case BISHOP -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "B" : "b";
+            case KNIGHT -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "N" : "n";
+            case PAWN -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? "P" : "p";
+        };
     }
 
 
