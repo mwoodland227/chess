@@ -47,6 +47,7 @@ public class WebSocketFacade extends Endpoint{
                 menu.loadGame(load.getGame());
             }
         }
+        
     }
 
     public void connect(String authToken, int gameID) throws IOException {

@@ -91,8 +91,8 @@ public class Menu {
                 };
                 case GAMEPLAY -> switch(cmd) {
                     case "redraw" -> redraw();
-                    case "move <from> <to> [promotion]" -> move(params);
-                    case "highlight <position>" -> highlightMoves(params);
+                    case "move" -> move(params);
+                    case "highlight" -> highlightMoves(params);
                     case "leave" -> leaveGame();
                     case "resign" -> resignGame();
                     case "help" -> help();
@@ -163,6 +163,7 @@ public class Menu {
                     - playgame <gameID> <color, white or black>
                     - observe <gameID>
                     - logout
+                    - help
                     - quit
                     """;
             case GAMEPLAY -> """
@@ -297,14 +298,14 @@ public class Menu {
 
     public void loadGame(ChessGame game) {
         this.currentGame = game;
-        ChessBoard.drawChessBoard(out, isWhiteView, game);
+        ChessBoard.drawChessBoard(out, isWhiteView, game, null, null);
     }
 
     public String redraw() throws ClientException{
         if(currentGame == null){
             throw new ClientException("No game loaded");
         }
-        ChessBoard.drawChessBoard(out, isWhiteView, currentGame);
+        ChessBoard.drawChessBoard(out, isWhiteView, currentGame, null, null);
         return "";
     }
 

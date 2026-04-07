@@ -243,7 +243,7 @@ public class WebSocketHandler {
             return;
         }
 
-        String json = new Gson().toJson(message);
+        String json = new Gson().toJson(message, message.getClass());
         sessions.removeIf(session -> !session.session.isOpen());
 
         for(WsContext session : sessions){
