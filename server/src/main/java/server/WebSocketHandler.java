@@ -1,20 +1,199 @@
 package server;
 
-import jakarta.websocket.*;
-import jakarta.websocket.server.ServerEndpoint;
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
+import dataclasses.AuthData;
+import dataclasses.GameData;
+import io.javalin.websocket.WsContext;
+//import jakarta.websocket.*;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
-@ServerEndpoint("/ws")
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class WebSocketHandler {
+    private final UserDAO userDAO;
+    private final GameDAO gameDAO;
+    private final Map<Integer, Set<WsContext>> gameConnections = new ConcurrentHashMap<>();
+    private final Map<WsContext, Integer> sessionToGame = new ConcurrentHashMap<>();
+    private final Map<WsContext, String> sessionToUser = new ConcurrentHashMap<>();
+    private record AuthGameData(String username, GameData gameData) {}
 
-    @OnOpen
-    public void onOpen(Session session){}
+    public WebSocketHandler(UserDAO userDAO, GameDAO gameDAO) {
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+    }
 
-    @OnMessage
-    public void onMessage(Session session, String message){}
+    public void connect(WsContext ctx, UserGameCommand command) {
+        AuthGameData data = getAuthGameData(ctx, command);
+        if(data == null){
+            return;
+        }
 
-    @OnClose
-    public void onClose(Session session){}
+        int gameID = command.getGameID();
+        String username = data.username();
+        GameData gameData = data.gameData();
+        gameConnections.computeIfAbsent(gameID, id -> ConcurrentHashMap.newKeySet()).add(ctx);
+        sessionToGame.put(ctx, gameID);
+        sessionToUser.put(ctx, username);
 
-    @OnError
-    public void onError(Session session, Throwable error){}
+        ctx.send(new Gson().toJson(new LoadGameMessage(gameData.game())));
+
+        String role;
+        if(username.equals(gameData.whiteUsername())){
+            role = "white";
+        } else if(username.equals(gameData.blackUsername())){
+            role = "black";
+        } else {
+            role = "observer";
+        }
+
+        broadcastToOthers(gameID, ctx, new NotificationMessage(username + " connected as " + role));
+    }
+    public void makeMove(WsContext ctx, UserGameCommand command) {
+        AuthGameData data = getAuthGameData(ctx, command);
+        if (data == null) {
+            return;
+        }
+
+        String username = data.username();
+        GameData gameData = data.gameData();
+
+        boolean isWhite = username.equals(gameData.whiteUsername());
+        boolean isBlack = username.equals(gameData.blackUsername());
+
+        if(!isBlack && !isWhite){
+            sendError(ctx, "observers cannot make moves");
+            return;
+        }
+
+
+        broadcastToAll(command.getGameID(), new LoadGameMessage(updateGame.game()));
+        broadcastToAll(command.getGameID(), new NotificationMessage(username + " made a move"));
+    }
+    public void leave(WsContext ctx, UserGameCommand command) {
+        Integer gameID = sessionToGame.get(ctx);
+        String username = sessionToUser.get(ctx);
+
+        removeConnection(ctx);
+
+        if(gameID != null && username != null){
+            broadcastToAll(gameID, new NotificationMessage(username + " left the game"));
+        }
+    }
+
+
+
+    public void resign(WsContext ctx, UserGameCommand command) {
+        try {
+            AuthData auth = userDAO.getAuth(command.getAuthToken());
+            if (auth == null) {
+                sendError(ctx, "unauthorized");
+                return;
+            }
+
+            String username = auth.username();
+            GameData gameData = gameDAO.getGame(command.getGameID());
+            if (gameData == null) {
+                sendError(ctx, "game not found");
+                return;
+            }
+
+            boolean isPlayer = username.equals(gameData.whiteUsername()) ||
+                    username.equals(gameData.blackUsername());
+
+            if (!isPlayer) {
+                sendError(ctx, "observers cannot resign");
+                return;
+            }
+
+            // mark game as resigned / over
+            // update DAO
+
+            broadcastToAll(command.getGameID(),
+                    new NotificationMessage(username + " resigned"));
+        } catch (DataAccessException e) {
+            sendError(ctx, "server error");
+        }
+    }
+
+    private AuthGameData getAuthGameData(WsContext ctx, UserGameCommand command) {
+        try {
+            AuthData auth = userDAO.getAuth(command.getAuthToken());
+            if (auth == null) {
+                sendError(ctx, "unauthorized");
+                return null;
+            }
+
+            GameData gameData = gameDAO.getGame(command.getGameID());
+            if (gameData == null) {
+                sendError(ctx, "game not found");
+                return null;
+            }
+
+            return new AuthGameData(auth.username(), gameData);
+        } catch (DataAccessException e) {
+            sendError(ctx, "server error");
+            return null;
+        }
+    }
+
+
+    private void broadcastToAll(int gameID, ServerMessage message) {
+        broadcast(gameID, message, null);
+    }
+
+    private void broadcast(int gameID, ServerMessage message, WsContext excluded){
+        Set<WsContext> sessions = gameConnections.get(gameID);
+        if(sessions == null){
+            return;
+        }
+
+        String json = new Gson().toJson(message);
+        sessions.removeIf(session -> !session.session.isOpen());
+
+        for(WsContext session : sessions){
+            if(excluded == null || session != excluded){
+                session.send(json);
+            }
+        }
+    }
+
+    private void broadcastToOthers(int gameID, WsContext excluded, ServerMessage message){
+        broadcast(gameID, message, excluded);
+    }
+
+
+    private void sendError(WsContext ctx, String message) {
+        ctx.send(new Gson().toJson(new ErrorMessage(message)));
+    }
+
+
+    private Integer removeConnection(WsContext ctx) {
+        Integer gameID = sessionToGame.remove(ctx);
+        sessionToUser.remove(ctx);
+
+        if (gameID != null) {
+            Set<WsContext> sessions = gameConnections.get(gameID);
+            if (sessions != null) {
+                sessions.remove(ctx);
+                if (sessions.isEmpty()) {
+                    gameConnections.remove(gameID);
+                }
+            }
+        }
+        return gameID;
+    }
+
+    public void onClose(WsContext ctx){
+        removeConnection(ctx);
+    }
+
 }
