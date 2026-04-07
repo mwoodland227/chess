@@ -1,8 +1,10 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import client.websocket.WebSocketFacade;
-import jakarta.websocket.DeploymentException;
 import ui.ChessBoard;
 
 import dataclasses.AuthData;
@@ -30,6 +32,10 @@ public class Menu {
     private List<GameData> lastGames;
     private WebSocketFacade ws;
     private boolean isWhiteView = true;
+
+    private Integer currentGameID;
+    private ChessGame currentGame;
+    private boolean observing = false;
 
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
@@ -83,6 +89,15 @@ public class Menu {
                     case "quit" -> "quit";
                     default -> help();
                 };
+                case GAMEPLAY -> switch(cmd) {
+                    case "redraw" -> redraw();
+                    case "move <from> <to> [promotion]" -> move(params);
+                    case "highlight <position>" -> highlightMoves(params);
+                    case "leave" -> leaveGame();
+                    case "resign" -> resignGame();
+                    case "help" -> help();
+                    default -> help();
+                };
             };
         } catch (ClientException e) {
             return "Error: " + e.getMessage();
@@ -111,6 +126,11 @@ public class Menu {
         state = State.SIGNEDOUT;
         username = null;
         password = null;
+        authToken = null;
+        ws = null;
+        currentGameID = null;
+        currentGame = null;
+        observing = false;
         return "Logged out";
     }
 
@@ -145,6 +165,14 @@ public class Menu {
                     - logout
                     - quit
                     """;
+            case GAMEPLAY -> """
+                - redraw
+                - move <from> <to> [promotion]
+                - highlight <position>
+                - leave
+                - resign
+                - help
+                """;
         };
     }
 
@@ -207,6 +235,10 @@ public class Menu {
             try{
                 ws = new WebSocketFacade(server.getUrl(), this);
                 ws.connect(authToken, gameID);
+                currentGameID = gameID;
+                currentGame = null;
+                observing = false;
+                state = State.GAMEPLAY;
                 return "Connecting to game " + gameID + " as " + color;
             } catch (Exception e) {
                 throw new ClientException("wasn't able to connect");
@@ -235,6 +267,10 @@ public class Menu {
             try{
                 ws = new WebSocketFacade(server.getUrl(), this);
                 ws.connect(authToken, gameID);
+                currentGameID = gameID;
+                currentGame = null;
+                observing = true;
+                state = State.GAMEPLAY;
                 return "Connecting to game " + gameID + " as observer.";
             } catch (Exception e){
                 throw new ClientException("wasn't able to connect");
@@ -260,6 +296,119 @@ public class Menu {
     }
 
     public void loadGame(ChessGame game) {
+        this.currentGame = game;
         ChessBoard.drawChessBoard(out, isWhiteView, game);
+    }
+
+    public String redraw() throws ClientException{
+        if(currentGame == null){
+            throw new ClientException("No game loaded");
+        }
+        ChessBoard.drawChessBoard(out, isWhiteView, currentGame);
+        return "";
+    }
+
+    public String move(String... params) throws ClientException{
+        if(params.length < 2 || params.length > 3){
+            throw new ClientException("Expected <from> <to> [promotion]");
+        }
+        if(ws == null || currentGameID == null){
+            throw new ClientException("Not in a game");
+        }
+        if(observing){
+            throw new ClientException("Observers cannot make moves");
+        }
+
+        try{
+            var start = parsePosition(params[0]);
+            var end = parsePosition(params[1]);
+            ChessPiece.PieceType promotion = null;
+
+            if(params.length == 3){
+                promotion = parsePromotion(params[2]);
+            }
+            ChessMove move = new ChessMove(start, end, promotion);
+            ws.makeMove(authToken, currentGameID, move);
+            return "Move sent";
+        } catch (IOException e) {
+            throw new ClientException("Unable to send move");
+        }
+    }
+
+    private ChessPosition parsePosition(String value) throws ClientException{
+        if(value == null || value.length() != 2){
+            throw new ClientException("Expected a position, example: e1");
+        }
+        char file = Character.toLowerCase(value.charAt(0));
+        char rank = value.charAt(1);
+
+        if(file < 'a' || file > 'h' || rank < '1' || rank > '8'){
+            throw new ClientException("Expected a position, example: e1");
+        }
+        int col = file - 'a' + 1;
+        int row = rank - '0';
+
+        return new ChessPosition(row, col);
+    }
+
+    private ChessPiece.PieceType parsePromotion(String value) throws ClientException{
+        return switch (value.toLowerCase()){
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> throw new ClientException("Promotion must be queen, rook, bishop, or knight");
+        };
+    }
+
+    public String leaveGame() throws ClientException{
+        if (ws == null || currentGameID == null){
+            throw new ClientException("Not in a game");
+        }
+        try{
+            ws.leave(authToken, currentGameID);
+            ws = null;
+            currentGameID = null;
+            currentGame = null;
+            observing = false;
+            state = State.SIGNEDIN;
+            return "Left game";
+        } catch (IOException e) {
+            throw new ClientException("Unable to leave game");
+        }
+    }
+
+    public String resignGame() throws ClientException{
+        if (ws == null || currentGameID == null) {
+            throw new ClientException("Not in a game");
+        }
+        if (observing) {
+            throw new ClientException("Observers cannot resign");
+        }
+
+        try{
+            ws.resign(authToken, currentGameID);
+            return "Resignation sent";
+        } catch (IOException e) {
+            throw new ClientException("Unable to resign");
+        }
+    }
+
+    public String highlightMoves(String... params) throws ClientException {
+        if(params.length != 1){
+            throw new ClientException("Expected <position>, example: e2");
+        }
+        if (currentGame == null){
+            throw new ClientException("No game loaded");
+        }
+
+        ChessPosition selected = parsePosition(params[0]);
+        ChessPiece piece = currentGame.getBoard().getPiece(selected);
+        if(piece == null){
+            throw new ClientException("No piece at that position");
+        }
+        var legalMoves = currentGame.validMoves(selected);
+        ChessBoard.drawChessBoard(out, isWhiteView, currentGame, selected, legalMoves);
+        return "";
     }
 }

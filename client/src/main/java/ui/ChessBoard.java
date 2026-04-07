@@ -1,10 +1,12 @@
 package ui;
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -15,8 +17,8 @@ public class ChessBoard {
 
     // padded characters
     private static final String EMPTY = " ";
-    private static final String LIGHT = SET_BG_COLOR_WHITE + EMPTY + RESET_BG_COLOR;
-    private static final String DARK = SET_BG_COLOR_DARK_GREY + EMPTY + RESET_BG_COLOR;
+//    private static final String LIGHT = SET_BG_COLOR_WHITE + EMPTY + RESET_BG_COLOR;
+//    private static final String DARK = SET_BG_COLOR_DARK_GREY + EMPTY + RESET_BG_COLOR;
 
     private static final String ROWS = "12345678";
     private static final String WHITECOL = "abcdefgh";
@@ -29,15 +31,15 @@ public class ChessBoard {
         boolean isWhite = Boolean.parseBoolean(args[1]) ;
 
         ChessGame game = new ChessGame();
-        drawChessBoard(out, isWhite, game);
+        drawChessBoard(out, isWhite, game, null, null);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out, boolean iSWhite){
+    private static void drawHeaders(PrintStream out, boolean isWhite){
         setBlack(out);
         out.print("  ");
-        String cols = iSWhite ? WHITECOL : BLACKCOL;
+        String cols = isWhite ? WHITECOL : BLACKCOL;
         for (int col = 0; col < BOARD_SIZE_IN_SQUARES; ++col) {
             out.print(SET_TEXT_COLOR_GREEN);
             out.print(" " + cols.charAt(col) + " ");
@@ -47,7 +49,8 @@ public class ChessBoard {
     }
 
 
-    public static void  drawChessBoard(PrintStream out, boolean isWhite, ChessGame game){
+    public static void  drawChessBoard(PrintStream out, boolean isWhite, ChessGame game,
+                                       ChessPosition selected, Collection<ChessMove> legalMoves){
         drawHeaders(out, isWhite);
         setBlack(out);
         for(int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow){
@@ -59,9 +62,11 @@ public class ChessBoard {
             }
             char rowName = ROWS.charAt(row);
             drawRowName(out, rowName);
-            drawSquareRow(out, row, isWhite, game);
+            drawSquareRow(out, row, isWhite, game, selected, legalMoves);
 
         }
+        // maybe take out this second drawHeaders call
+        drawHeaders(out, isWhite);
     }
 
     private static void drawRowName(PrintStream out, char name){
@@ -104,45 +109,124 @@ public class ChessBoard {
 //    }
     // the old hard coded board pieces
 
-    private static void drawSquareRow(PrintStream out, int row, boolean isWhite, ChessGame game){
+    private static void drawSquareRow(PrintStream out, int row, boolean isWhite, ChessGame game,
+                                      ChessPosition selected, Collection<ChessMove> legalMoves) {
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             int col = isWhite ? boardCol : BOARD_SIZE_IN_SQUARES - 1 - boardCol;
 
+            ChessPosition position = new ChessPosition(row + 1, col + 1);
+
+            boolean isSelected = selected != null && selected.equals(position);
+            boolean isLegalMove = isLegalDestination(position, legalMoves);
+//            boolean isLegalMove = false;
+//            if (legalMoves != null) {
+//                for (ChessMove move : legalMoves) {
+//                    if (move.getEndPosition().equals(position)) {
+//                        isLegalMove = true;
+//                        break;
+//                    }
+//                }
+//            }
+
             boolean isLight = ((row + col) % 2 != 0);
 
-            String square = isLight ? LIGHT : DARK;
-
-            ChessPosition position = new ChessPosition(row + 1, col + 1);
             ChessPiece piece = game.getBoard().getPiece(position);
             String pieceText = getPieceString(piece);
 
-            out.print(square);
+            setSquareColor(out, isLight, isSelected, isLegalMove);
+            out.print(" ");
 
-            if(isLight) {
-                out.print(SET_BG_COLOR_WHITE);
-            } else{
-                out.print(SET_BG_COLOR_BLACK);
-            }
+//            String square = isLight ? LIGHT : DARK;
+
+//            ChessPosition position = new ChessPosition(row + 1, col + 1);
+
+            setSquareColor(out, isLight, isSelected, isLegalMove);
 
             if (!pieceText.equals(EMPTY)) {
                 boolean isWhitePiece = Character.isUpperCase(pieceText.charAt(0));
-                if(isWhitePiece){
-                    out.print(SET_TEXT_COLOR_RED);
-                } else{
-                    out.print(SET_TEXT_COLOR_BLUE);
-
-                }
-
-
+                out.print(isWhitePiece ? SET_TEXT_COLOR_RED : SET_TEXT_COLOR_BLUE);
                 out.print(pieceText);
-                out.print(SET_TEXT_COLOR_BLACK);
             } else {
                 out.print(" ");
             }
-            out.print(square);
 
+            setSquareColor(out, isLight, isSelected, isLegalMove);
+            out.print(" ");
+
+            out.print(RESET_BG_COLOR);
+            out.print(SET_TEXT_COLOR_BLACK);
+
+//            out.print(square);
         }
+        out.print(SET_TEXT_COLOR_GREEN);
+        out.print(" " + (row + 1));
+        setBlack(out);
         out.println();
+
+
+//            if(isLight) {
+//                out.print(SET_BG_COLOR_WHITE);
+//            } else{
+//                out.print(SET_BG_COLOR_BLACK);
+//            }
+
+//            if (!pieceText.equals(EMPTY)) {
+//                boolean isWhitePiece = Character.isUpperCase(pieceText.charAt(0));
+//                if(isWhitePiece){
+//                    out.print(SET_TEXT_COLOR_RED);
+//                } else{
+//                    out.print(SET_TEXT_COLOR_BLUE);
+//
+//                }
+
+
+//                out.print(pieceText);
+////                out.print(SET_TEXT_COLOR_BLACK);
+//            } else {
+//                out.print(" ");
+//            }
+//
+//            if (isSelected) {
+//                out.print(SET_BG_COLOR_YELLOW);
+//            } else if (isLegalMove) {
+//                out.print(SET_BG_COLOR_GREEN);
+//            } else if (isLight) {
+//                out.print(SET_BG_COLOR_WHITE);
+//            } else {
+//                out.print(SET_BG_COLOR_DARK_GREY);
+//            }
+//
+//            out.print(square);
+//            out.print(RESET_BG_COLOR);
+//            out.print(SET_TEXT_COLOR_BLACK);
+
+
+    }
+
+
+
+    private static boolean isLegalDestination(ChessPosition position, Collection<ChessMove> legalMoves) {
+        if (legalMoves == null) {
+            return false;
+        }
+        for (ChessMove move : legalMoves) {
+            if (move.getEndPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void setSquareColor(PrintStream out, boolean isLight, boolean isSelected, boolean isLegalMove) {
+        if (isSelected) {
+            out.print(SET_BG_COLOR_YELLOW);
+        } else if (isLegalMove) {
+            out.print(SET_BG_COLOR_GREEN);
+        } else if (isLight) {
+            out.print(SET_BG_COLOR_WHITE);
+        } else {
+            out.print(SET_BG_COLOR_DARK_GREY);
+        }
     }
 
     private static String getPieceString(ChessPiece piece) {
