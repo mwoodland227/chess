@@ -279,8 +279,8 @@ public class WebSocketHandler {
         return gameID;
     }
 
-//    public void onClose(WsContext ctx){
-//        removeConnection(ctx);
-//    }
+    public void onClose(WsContext ctx){
+        removeConnection(ctx);
+    }
 
 }

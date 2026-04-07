@@ -5,7 +5,7 @@ import dataaccess.*;
 import handler.Handler;
 import io.javalin.*;
 import websocket.commands.UserGameCommand;
-import server.WebSocketHandler.*;
+import websocket.messages.ErrorMessage;
 
 public class Server {
     public final Handler handle;
@@ -17,13 +17,14 @@ public class Server {
 
     public Server() {
         try{
+            DatabaseManager.configureDatabase(); // switched this to initialize this before game and user DAO
             this.gameDAO = new MySqlGame();
             this.userDAO = new MySqlUser();
-            DatabaseManager.configureDatabase();
         } catch (DataAccessException e){
             throw new RuntimeException(e);
         }
         this.handle = new Handler(userDAO, gameDAO);
+        this.webSocketHandler = new WebSocketHandler(userDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -44,16 +45,28 @@ public class Server {
 
         javalin.ws("/ws", ws -> {
             ws.onConnect(ctx -> { });
-            ws.onMessage(ctx -> {
-                UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-                switch (command.getCommandType()) {
-                    case CONNECT -> new WebSocketHandler(userDAO, gameDAO).connect(ctx, command);
-                    case MAKE_MOVE -> new WebSocketHandler(userDAO, gameDAO).makeMove(ctx, command);
-                    case LEAVE -> new WebSocketHandler(userDAO, gameDAO).leave(ctx, command);
-                    case RESIGN -> new WebSocketHandler(userDAO, gameDAO).resign(ctx, command);
 
+            ws.onMessage(ctx -> {
+                try {
+                    UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+
+                    if (command == null || command.getCommandType() == null) {
+                        ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
+                        return;
+                    }
+
+                    switch (command.getCommandType()) {
+                        case CONNECT -> webSocketHandler.connect(ctx, command);
+                        case MAKE_MOVE -> webSocketHandler.makeMove(ctx, command);
+                        case LEAVE -> webSocketHandler.leave(ctx, command);
+                        case RESIGN -> webSocketHandler.resign(ctx, command);
+                    }
+                } catch (Exception e) {
+                    ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
+                }
             });
-            ws.onClose(ctx -> { });
+
+            ws.onClose(ctx -> webSocketHandler.onClose(ctx));
             ws.onError(ctx -> { });
         });
 
