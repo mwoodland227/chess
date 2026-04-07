@@ -13,12 +13,22 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor currentTurn;
+    private boolean gameOver;
 
     public ChessGame() {
 
         this.board = new ChessBoard();
         board.resetBoard();
         this.currentTurn = TeamColor.WHITE;
+        this.gameOver = false;
+    }
+
+    public boolean isGameOver(){
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver){
+        this.gameOver = gameOver;
     }
 
     /**
@@ -90,6 +100,10 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(gameOver){
+            throw new InvalidMoveException("Game is over");
+        }
+
         ChessPosition startPosition = move.getStartPosition();
         ChessPiece piece = board.getPiece(startPosition);
         if(piece == null) {
@@ -237,11 +251,13 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && currentTurn == chessGame.currentTurn;
+        return gameOver == chessGame.gameOver &&
+                Objects.equals(board, chessGame.board) &&
+                currentTurn == chessGame.currentTurn;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, currentTurn);
+        return Objects.hash(board, currentTurn, gameOver);
     }
 }
