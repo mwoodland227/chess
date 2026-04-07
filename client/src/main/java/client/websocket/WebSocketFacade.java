@@ -1,5 +1,6 @@
 package client.websocket;
 
+import chess.ChessMove;
 import client.Menu;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
@@ -49,8 +50,27 @@ public class WebSocketFacade extends Endpoint{
     }
 
     public void connect(String authToken, int gameID) throws IOException {
-        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID, null);
-        String json = new Gson().toJson(command);
-        session.getBasicRemote().sendText(json);
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                authToken, gameID, null);
+        session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE,
+                authToken, gameID, move);
+
+        session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+
+    public void leave(String authToken, int gameID) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE,
+                authToken, gameID, null);
+        session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+
+    public void resign(String authToken, int gameID) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN,
+                authToken, gameID, null);
+        session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 }
