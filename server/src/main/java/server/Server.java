@@ -45,6 +45,7 @@ public class Server {
 
         javalin.ws("/ws", ws -> {
             ws.onConnect(ctx -> {
+                System.out.println("WS connected");
                 ctx.enableAutomaticPings();
             });
 
@@ -68,7 +69,10 @@ public class Server {
                 }
             });
 
-            ws.onClose(ctx -> webSocketHandler.onClose(ctx));
+            ws.onClose(ctx -> {
+                System.out.println("WS closed on server");
+                webSocketHandler.onClose(ctx);
+            });
             ws.onError(ctx -> { });
         });
 

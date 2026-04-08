@@ -21,7 +21,12 @@ public class WebSocketFacade extends Endpoint{
         this.menu = menu;
         String wsUrl = serverUrl.replaceFirst("^http", "ws") + "/ws";
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+
+        container.setDefaultMaxSessionIdleTimeout(0);
+
         this.session = container.connectToServer(this, URI.create(wsUrl));
+
+        this.session.setMaxIdleTimeout(0);
     }
 
     @Override
