@@ -31,6 +31,11 @@ public class WebSocketFacade extends Endpoint{
         session.addMessageHandler(String.class, this::handleMessage);
     }
 
+    @Override
+    public void onClose(Session session, CloseReason closeReason){
+        System.out.println("WebSocket close: " + closeReason);
+    }
+
     private void handleMessage(String json) {
         ServerMessage message = new Gson().fromJson(json, ServerMessage.class);
         switch (message.getServerMessageType()){
