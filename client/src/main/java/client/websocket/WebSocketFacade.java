@@ -36,7 +36,7 @@ public class WebSocketFacade extends Endpoint{
         switch (message.getServerMessageType()){
             case NOTIFICATION -> {
                 NotificationMessage note = new Gson().fromJson(json, NotificationMessage.class);
-                menu.printNotification(note.getNotification());
+                menu.printNotification(note.getMessage());
             }
             case ERROR -> {
                 ErrorMessage error = new Gson().fromJson(json, ErrorMessage.class);
@@ -47,7 +47,7 @@ public class WebSocketFacade extends Endpoint{
                 menu.loadGame(load.getGame());
             }
         }
-        
+
     }
 
     public void connect(String authToken, int gameID) throws IOException {
