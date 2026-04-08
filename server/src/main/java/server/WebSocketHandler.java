@@ -119,7 +119,7 @@ public class WebSocketHandler {
             );
             gameDAO.updateGame(updatedGame);
             broadcastToAll(command.getGameID(), new LoadGameMessage(updatedGame.game()));
-            broadcastToOthers(command.getGameID(), ctx, new NotificationMessage(username + " moved " + move));
+            broadcastToOthersByUser(command.getGameID(), ctx, new NotificationMessage(username + " moved " + move));
 
             ChessGame.TeamColor turn = game.getTeamTurn();
             if(game.isInCheckmate(turn)){
@@ -136,6 +136,7 @@ public class WebSocketHandler {
         }
 
     }
+
     public void leave(WsContext ctx, UserGameCommand command) {
         AuthGameData data = getAuthGameData(ctx, command);
         if (data == null) {
@@ -255,7 +256,7 @@ public class WebSocketHandler {
         sessions.removeIf(session -> !session.session.isOpen());
 
         for(WsContext session : sessions){
-            if(excluded == null || session != excluded){
+            if(excluded == null || !session.equals(excluded)){
                 session.send(json);
             }
         }
@@ -263,6 +264,24 @@ public class WebSocketHandler {
 
     private void broadcastToOthers(int gameID, WsContext excluded, ServerMessage message){
         broadcast(gameID, message, excluded);
+    }
+
+    private void broadcastToOthersByUser(int gameID, WsContext excluded, ServerMessage message) {
+        Set<WsContext> sessions = gameConnections.get(gameID);
+        if (sessions == null) {
+            return;
+        }
+
+        String excludedUser = sessionToUser.get(excluded);
+        String json = new Gson().toJson(message, message.getClass());
+        sessions.removeIf(session -> !session.session.isOpen());
+
+        for (WsContext session : sessions) {
+            String sessionUser = sessionToUser.get(session);
+            if (excludedUser == null || !excludedUser.equals(sessionUser)) {
+                session.send(json);
+            }
+        }
     }
 
 
