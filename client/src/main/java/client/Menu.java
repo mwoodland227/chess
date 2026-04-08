@@ -11,7 +11,6 @@ import dataclasses.AuthData;
 import dataclasses.GameData;
 import dataclasses.UserData;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
