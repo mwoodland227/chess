@@ -61,10 +61,17 @@ public class WebSocketFacade extends Endpoint{
 
     }
 
+    private void sendCommand(UserGameCommand command) throws Exception{
+        if(session == null || !session.isOpen()){
+            throw new Exception("Websocket connection closed");
+        }
+        session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+
     public void connect(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
                 authToken, gameID, null);
-        session.getBasicRemote().sendText(new Gson().toJson(command));
+        sendCommand(command);
     }
 
 
@@ -72,18 +79,18 @@ public class WebSocketFacade extends Endpoint{
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE,
                 authToken, gameID, move);
 
-        session.getBasicRemote().sendText(new Gson().toJson(command));
+        sendCommand(command);
     }
 
     public void leave(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE,
                 authToken, gameID, null);
-        session.getBasicRemote().sendText(new Gson().toJson(command));
+        sendCommand(command);
     }
 
     public void resign(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN,
                 authToken, gameID, null);
-        session.getBasicRemote().sendText(new Gson().toJson(command));
+        sendCommand(command);
     }
 }
