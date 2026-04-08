@@ -18,7 +18,7 @@ public class WebSocketFacade extends Endpoint{
     private Session session;
 
 
-    public WebSocketFacade(String serverUrl, Menu menu) throws DeploymentException, IOException {
+    public WebSocketFacade(String serverUrl, Menu menu) throws Exception  {
         this.menu = menu;
         String wsUrl = serverUrl.replaceFirst("^http", "ws") + "/ws";
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -50,27 +50,27 @@ public class WebSocketFacade extends Endpoint{
 
     }
 
-    public void connect(String authToken, int gameID) throws IOException {
+    public void connect(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT,
                 authToken, gameID, null);
         session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 
 
-    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException {
+    public void makeMove(String authToken, int gameID, ChessMove move) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE,
                 authToken, gameID, move);
 
         session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 
-    public void leave(String authToken, int gameID) throws IOException {
+    public void leave(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE,
                 authToken, gameID, null);
         session.getBasicRemote().sendText(new Gson().toJson(command));
     }
 
-    public void resign(String authToken, int gameID) throws IOException {
+    public void resign(String authToken, int gameID) throws Exception {
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN,
                 authToken, gameID, null);
         session.getBasicRemote().sendText(new Gson().toJson(command));

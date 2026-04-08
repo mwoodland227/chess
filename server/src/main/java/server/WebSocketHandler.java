@@ -129,10 +129,8 @@ public class WebSocketHandler {
             } else if (game.isInCheck(turn)){
                 broadcastToAll(command.getGameID(), new NotificationMessage(turn + " is in check"));
             }
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             sendError(ctx, "server error");
-        }catch (Exception e){
-            sendError(ctx, "invalid move");
         }
 
     }

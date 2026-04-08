@@ -340,7 +340,7 @@ public class Menu {
             ChessMove move = new ChessMove(start, end, promotion);
             ws.makeMove(authToken, currentGameID, move);
             return "Move sent";
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ClientException("Unable to send move");
         }
     }
@@ -383,7 +383,7 @@ public class Menu {
             observing = false;
             state = State.SIGNEDIN;
             return "Left game";
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ClientException("Unable to leave game");
         }
     }
@@ -399,7 +399,7 @@ public class Menu {
         try{
             ws.resign(authToken, currentGameID);
             return "Resignation sent";
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ClientException("Unable to resign");
         }
     }
