@@ -154,7 +154,7 @@ public class ChessBoard {
             out.print(" ");
 
             out.print(RESET_BG_COLOR);
-            out.print(SET_TEXT_COLOR_BLACK);
+            out.print(SET_TEXT_COLOR_WHITE);
 
 //            out.print(square);
         }

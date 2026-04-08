@@ -299,6 +299,15 @@ public class Menu {
     public void loadGame(ChessGame game) {
         this.currentGame = game;
         ChessBoard.drawChessBoard(out, isWhiteView, game, null, null);
+
+        // debugging
+//        this.currentGame = game;
+//        try {
+//            ChessBoard.drawChessBoard(out, isWhiteView, game, null, null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            out.println("DRAW ERROR: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+//        }
     }
 
     public String redraw() throws ClientException{

@@ -32,8 +32,8 @@ public class MySqlGame implements GameDAO{
 
     @Override
     public int createGame(String gameName) throws DataAccessException {
-        var statement = "INSERT INTO game (gameName) VALUES (?)";
-        return DatabaseManager.executeUpdate(statement, gameName);
+        var statement = "INSERT INTO game (gameName, gameState) VALUES (?, ?)";
+        return DatabaseManager.executeUpdate(statement, gameName, new Gson().toJson(new ChessGame()));
     }
 
     @Override

@@ -34,7 +34,7 @@ public class WebSocketHandler {
         this.gameDAO = gameDAO;
     }
 
-    public void connect(WsContext ctx, UserGameCommand command) {
+    public void connect(WsContext ctx, UserGameCommand command) throws DataAccessException {
         AuthGameData data = getAuthGameData(ctx, command);
         if(data == null){
             return;
@@ -42,12 +42,19 @@ public class WebSocketHandler {
 
         int gameID = command.getGameID();
         String username = data.username();
-        GameData gameData = data.gameData();
+        GameData gameData = gameDAO.getGame(command.getGameID());
         gameConnections.computeIfAbsent(gameID, id -> ConcurrentHashMap.newKeySet()).add(ctx);
         sessionToGame.put(ctx, gameID);
         sessionToUser.put(ctx, username);
 
+        // debugging
+//        LoadGameMessage msg = new LoadGameMessage(gameData.game());
+//        System.out.println("SERVER GAME NULL? " + (gameData.game() == null));
+//        System.out.println("SERVER JSON: " + new Gson().toJson(msg, msg.getClass()));
+//        ctx.send(new Gson().toJson(msg, msg.getClass()));
+
         ctx.send(new Gson().toJson(new LoadGameMessage(gameData.game())));
+        //taken out for debugging
 
         String role;
         if(username.equals(gameData.whiteUsername())){
@@ -60,6 +67,7 @@ public class WebSocketHandler {
 
         broadcastToOthers(gameID, ctx, new NotificationMessage(username + " connected as " + role));
     }
+
     public void makeMove(WsContext ctx, UserGameCommand command) {
         AuthGameData data = getAuthGameData(ctx, command);
         if (data == null) {
