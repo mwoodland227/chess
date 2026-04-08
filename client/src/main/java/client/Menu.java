@@ -252,9 +252,6 @@ public class Menu {
         throw new ClientException("Expected <gameIndex> <WHITE|BLACK>");
     }
 
-//    public void showBoard(ChessGame game, boolean isWhite){
-//        ChessBoard.drawChessBoard(out, isWhite, game);
-//    }
 
     public String observe(String... params) throws ClientException{
         if(params.length == 1){
@@ -262,8 +259,6 @@ public class Menu {
             if(lastGames == null || id < 0 || id >= lastGames.size()){
                 throw new ClientException("bad gameID");
             }
-//            showBoard(true);
-//            return "Observing ";
             int gameID = lastGames.get(id).gameID();
             isWhiteView = true;
 
