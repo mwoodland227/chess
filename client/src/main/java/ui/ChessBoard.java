@@ -17,8 +17,6 @@ public class ChessBoard {
 
     // padded characters
     private static final String EMPTY = " ";
-//    private static final String LIGHT = SET_BG_COLOR_WHITE + EMPTY + RESET_BG_COLOR;
-//    private static final String DARK = SET_BG_COLOR_DARK_GREY + EMPTY + RESET_BG_COLOR;
 
     private static final String ROWS = "12345678";
     private static final String WHITECOL = "abcdefgh";
@@ -65,7 +63,6 @@ public class ChessBoard {
             drawSquareRow(out, row, isWhite, game, selected, legalMoves);
 
         }
-        // maybe take out this second drawHeaders call
         drawHeaders(out, isWhite);
     }
 
@@ -75,39 +72,6 @@ public class ChessBoard {
         setBlack(out);
     }
 
-//    private static String getPiece(int row, int col){
-//        if(row == 0){
-//            return switch (col){
-//                case 0, 7 -> "R";
-//                case 1, 6 -> "N";
-//                case 2,5 -> "B";
-//                case 3 -> "Q";
-//                case 4 -> "K";
-//                default -> EMPTY;
-//            };
-//        }
-//        if(row == 1){
-//            return "P";
-//        }
-//
-//        if(row == 7){
-//            return switch (col){
-//                case 0, 7 -> "r";
-//                case 1, 6 -> "n";
-//                case 2,5 -> "b";
-//                case 3 -> "q";
-//                case 4 -> "k";
-//                default -> EMPTY;
-//            };
-//        }
-//        if(row == 6){
-//            return "p";
-//        }
-//
-//        return EMPTY;
-//
-//    }
-    // the old hard coded board pieces
 
     private static void drawSquareRow(PrintStream out, int row, boolean isWhite, ChessGame game,
                                       ChessPosition selected, Collection<ChessMove> legalMoves) {
@@ -118,15 +82,6 @@ public class ChessBoard {
 
             boolean isSelected = selected != null && selected.equals(position);
             boolean isLegalMove = isLegalDestination(position, legalMoves);
-//            boolean isLegalMove = false;
-//            if (legalMoves != null) {
-//                for (ChessMove move : legalMoves) {
-//                    if (move.getEndPosition().equals(position)) {
-//                        isLegalMove = true;
-//                        break;
-//                    }
-//                }
-//            }
 
             boolean isLight = ((row + col) % 2 != 0);
 
@@ -136,9 +91,6 @@ public class ChessBoard {
             setSquareColor(out, isLight, isSelected, isLegalMove);
             out.print(" ");
 
-//            String square = isLight ? LIGHT : DARK;
-
-//            ChessPosition position = new ChessPosition(row + 1, col + 1);
 
             setSquareColor(out, isLight, isSelected, isLegalMove);
 
@@ -156,50 +108,11 @@ public class ChessBoard {
             out.print(RESET_BG_COLOR);
             out.print(SET_TEXT_COLOR_WHITE);
 
-//            out.print(square);
         }
         out.print(SET_TEXT_COLOR_GREEN);
         out.print(" " + (row + 1));
         setBlack(out);
         out.println();
-
-
-//            if(isLight) {
-//                out.print(SET_BG_COLOR_WHITE);
-//            } else{
-//                out.print(SET_BG_COLOR_BLACK);
-//            }
-
-//            if (!pieceText.equals(EMPTY)) {
-//                boolean isWhitePiece = Character.isUpperCase(pieceText.charAt(0));
-//                if(isWhitePiece){
-//                    out.print(SET_TEXT_COLOR_RED);
-//                } else{
-//                    out.print(SET_TEXT_COLOR_BLUE);
-//
-//                }
-
-
-//                out.print(pieceText);
-////                out.print(SET_TEXT_COLOR_BLACK);
-//            } else {
-//                out.print(" ");
-//            }
-//
-//            if (isSelected) {
-//                out.print(SET_BG_COLOR_YELLOW);
-//            } else if (isLegalMove) {
-//                out.print(SET_BG_COLOR_GREEN);
-//            } else if (isLight) {
-//                out.print(SET_BG_COLOR_WHITE);
-//            } else {
-//                out.print(SET_BG_COLOR_DARK_GREY);
-//            }
-//
-//            out.print(square);
-//            out.print(RESET_BG_COLOR);
-//            out.print(SET_TEXT_COLOR_BLACK);
-
 
     }
 

@@ -47,14 +47,7 @@ public class WebSocketHandler {
         sessionToGame.put(ctx, gameID);
         sessionToUser.put(ctx, username);
 
-        // debugging
-//        LoadGameMessage msg = new LoadGameMessage(gameData.game());
-//        System.out.println("SERVER GAME NULL? " + (gameData.game() == null));
-//        System.out.println("SERVER JSON: " + new Gson().toJson(msg, msg.getClass()));
-//        ctx.send(new Gson().toJson(msg, msg.getClass()));
-
         ctx.send(new Gson().toJson(new LoadGameMessage(gameData.game())));
-        //taken out for debugging
 
         String role;
         if(username.equals(gameData.whiteUsername())){
