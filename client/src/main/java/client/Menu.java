@@ -240,7 +240,7 @@ public class Menu {
                 currentGame = null;
                 observing = false;
                 state = State.GAMEPLAY;
-                return "Connecting to game " + gameID + " as " + color;
+                return "Connecting to game " + params[0] + " as " + color;
             } catch (Exception e) {
                 throw new ClientException("wasn't able to connect");
             }
@@ -272,7 +272,7 @@ public class Menu {
                 currentGame = null;
                 observing = true;
                 state = State.GAMEPLAY;
-                return "Connecting to game " + gameID + " as observer.";
+                return "Connecting to game " + params[0] + " as observer.";
             } catch (Exception e){
                 throw new ClientException("wasn't able to connect");
             }
