@@ -10,7 +10,6 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import java.io.IOException;
 import java.net.URI;
 
 public class WebSocketFacade extends Endpoint{
@@ -63,7 +62,7 @@ public class WebSocketFacade extends Endpoint{
 
     private void sendCommand(UserGameCommand command) throws Exception{
         if(session == null || !session.isOpen()){
-            throw new Exception("Websocket connection closed");
+            throw new Exception("WebSocket connection closed");
         }
         session.getBasicRemote().sendText(new Gson().toJson(command));
     }

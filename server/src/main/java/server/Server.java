@@ -44,7 +44,9 @@ public class Server {
         javalin.put("/game", handle::handleJoinGame);
 
         javalin.ws("/ws", ws -> {
-            ws.onConnect(ctx -> { });
+            ws.onConnect(ctx -> {
+                ctx.enableAutomaticPings();
+            });
 
             ws.onMessage(ctx -> {
                 try {

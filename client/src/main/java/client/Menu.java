@@ -59,7 +59,7 @@ public class Menu {
     }
 
     private void printPrompt(){
-        System.out.print("\n" + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + ">>> \n" + SET_TEXT_COLOR_GREEN);
     }
 
     public String eval(String input){
