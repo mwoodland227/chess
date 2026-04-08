@@ -39,6 +39,10 @@ public class Menu {
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
         this.out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        try {
+            ws = new WebSocketFacade(server.getUrl(), this);
+        } catch (Exception e) {
+        }
     }
 
     public void readEval() {
@@ -233,7 +237,6 @@ public class Menu {
 //            return "Joined game " + gameID + " as " + color;
 
             try{
-                ws = new WebSocketFacade(server.getUrl(), this);
                 ws.connect(authToken, gameID);
                 currentGameID = gameID;
                 currentGame = null;
@@ -265,7 +268,6 @@ public class Menu {
             isWhiteView = true;
 
             try{
-                ws = new WebSocketFacade(server.getUrl(), this);
                 ws.connect(authToken, gameID);
                 currentGameID = gameID;
                 currentGame = null;
