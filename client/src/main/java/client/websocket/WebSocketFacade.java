@@ -12,6 +12,9 @@ import websocket.messages.ServerMessage;
 
 import java.net.URI;
 
+import java.nio.ByteBuffer;
+
+
 public class WebSocketFacade extends Endpoint{
     private final Menu menu;
     private Session session;
@@ -33,6 +36,8 @@ public class WebSocketFacade extends Endpoint{
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
         session.addMessageHandler(String.class, this::handleMessage);
+
+        startHeartbeat();
     }
 
     @Override
@@ -44,6 +49,23 @@ public class WebSocketFacade extends Endpoint{
     public void onError(Session session, Throwable thr) {
         System.out.println("WebSocket error: " + thr.getMessage());
         thr.printStackTrace();
+    }
+
+    private void startHeartbeat(){
+        Thread heartbeat = new Thread(() -> {
+            while (session != null && session.isOpen()) {
+                try {
+                    Thread.sleep(20000);
+                    if (session != null && session.isOpen()) {
+                        session.getAsyncRemote().sendPing(ByteBuffer.wrap(new byte[]{1}));
+                    }
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        });
+        heartbeat.setDaemon(true);
+        heartbeat.start();
     }
 
     private void handleMessage(String json) {
