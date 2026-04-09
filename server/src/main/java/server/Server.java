@@ -51,27 +51,6 @@ public class Server {
             });
 
             ws.onMessage(ctx -> handleWsMessage(ctx, ctx.message()));
-            // replace below with this ^
-
-//            ws.onMessage(ctx -> {
-//                try {
-//                    UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-//
-//                    if (command == null || command.getCommandType() == null) {
-//                        ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
-//                        return;
-//                    }
-//
-//                    switch (command.getCommandType()) {
-//                        case CONNECT -> webSocketHandler.connect(ctx, command);
-//                        case MAKE_MOVE -> webSocketHandler.makeMove(ctx, command);
-//                        case LEAVE -> webSocketHandler.leave(ctx, command);
-//                        case RESIGN -> webSocketHandler.resign(ctx, command);
-//                    }
-//                } catch (Exception e) {
-//                    ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
-//                }
-//            });
 
             ws.onClose(ctx -> {
                 System.out.println("WS closed on server");
