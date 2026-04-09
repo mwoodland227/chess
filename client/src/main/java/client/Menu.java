@@ -36,6 +36,8 @@ public class Menu {
     private ChessGame currentGame;
     private boolean observing = false;
 
+    private final Scanner scanner = new Scanner(System.in);
+
     public Menu(String serverUrl){
         server = new ServerFacade(serverUrl);
         this.out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -48,11 +50,10 @@ public class Menu {
     public void readEval() {
         System.out.println("Welcome to Chess. Type help to start.");
 
-        Scanner scanner = new Scanner(System.in);
         var result = "";
         while(!result.equals("quit")){
             printPrompt();
-            String line = scanner.nextLine();
+            String line = this.scanner.nextLine();
 
             result = eval(line);
             System.out.print(SET_TEXT_COLOR_BLUE + result);
@@ -380,6 +381,14 @@ public class Menu {
         }
         if (observing) {
             throw new ClientException("Observers cannot resign");
+        }
+
+        System.out.print("\nAre you sure you want to resign? (yes/no): ");
+        System.out.flush();
+        String response = scanner.nextLine().trim().toLowerCase();
+
+        if (!response.equals("yes")) {
+            return "Resign cancelled";
         }
 
         try{

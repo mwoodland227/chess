@@ -115,12 +115,19 @@ public class WebSocketHandler {
             broadcastToOthersByUser(command.getGameID(), ctx, new NotificationMessage(username + " moved " + move));
 
             ChessGame.TeamColor turn = game.getTeamTurn();
-            if(game.isInCheckmate(turn)){
-                broadcastToAll(command.getGameID(), new NotificationMessage(turn + " is in checkmate"));
-            } else if(game.isInStalemate(turn)){
-                broadcastToAll(command.getGameID(), new NotificationMessage("stalemate"));
-            } else if (game.isInCheck(turn)){
-                broadcastToAll(command.getGameID(), new NotificationMessage(turn + " is in check"));
+            String checkedUsername = (turn == ChessGame.TeamColor.WHITE)
+                    ? updatedGame.whiteUsername()
+                    : updatedGame.blackUsername();
+
+            if (game.isInCheckmate(turn)) {
+                broadcastToAll(command.getGameID(),
+                        new NotificationMessage(checkedUsername + " is in checkmate"));
+            } else if (game.isInStalemate(turn)) {
+                broadcastToAll(command.getGameID(),
+                        new NotificationMessage("stalemate"));
+            } else if (game.isInCheck(turn)) {
+                broadcastToAll(command.getGameID(),
+                        new NotificationMessage(checkedUsername + " is in check"));
             }
         } catch (Exception e) {
             sendError(ctx, "server error");
