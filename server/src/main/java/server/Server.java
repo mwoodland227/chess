@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import handler.Handler;
 import io.javalin.*;
+import io.javalin.websocket.WsContext;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 
@@ -49,25 +50,28 @@ public class Server {
                 ctx.enableAutomaticPings();
             });
 
-            ws.onMessage(ctx -> {
-                try {
-                    UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            ws.onMessage(ctx -> handleWsMessage(ctx, ctx.message()));
+            // replace below with this ^
 
-                    if (command == null || command.getCommandType() == null) {
-                        ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
-                        return;
-                    }
-
-                    switch (command.getCommandType()) {
-                        case CONNECT -> webSocketHandler.connect(ctx, command);
-                        case MAKE_MOVE -> webSocketHandler.makeMove(ctx, command);
-                        case LEAVE -> webSocketHandler.leave(ctx, command);
-                        case RESIGN -> webSocketHandler.resign(ctx, command);
-                    }
-                } catch (Exception e) {
-                    ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
-                }
-            });
+//            ws.onMessage(ctx -> {
+//                try {
+//                    UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+//
+//                    if (command == null || command.getCommandType() == null) {
+//                        ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
+//                        return;
+//                    }
+//
+//                    switch (command.getCommandType()) {
+//                        case CONNECT -> webSocketHandler.connect(ctx, command);
+//                        case MAKE_MOVE -> webSocketHandler.makeMove(ctx, command);
+//                        case LEAVE -> webSocketHandler.leave(ctx, command);
+//                        case RESIGN -> webSocketHandler.resign(ctx, command);
+//                    }
+//                } catch (Exception e) {
+//                    ctx.send(new Gson().toJson(new ErrorMessage("invalid command")));
+//                }
+//            });
 
             ws.onClose(ctx -> {
                 System.out.println("WS closed on server");
@@ -76,6 +80,30 @@ public class Server {
             ws.onError(ctx -> { });
         });
 
+    }
+
+    private void handleWsMessage(WsContext ctx, String message) {
+        try {
+            UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
+
+            if (command == null || command.getCommandType() == null) {
+                sendWsError(ctx, "invalid command");
+                return;
+            }
+
+            switch (command.getCommandType()) {
+                case CONNECT -> webSocketHandler.connect(ctx, command);
+                case MAKE_MOVE -> webSocketHandler.makeMove(ctx, command);
+                case LEAVE -> webSocketHandler.leave(ctx, command);
+                case RESIGN -> webSocketHandler.resign(ctx, command);
+            }
+        } catch (Exception e) {
+            sendWsError(ctx, "invalid command");
+        }
+    }
+
+    private void sendWsError(WsContext ctx, String message) {
+        ctx.send(new Gson().toJson(new ErrorMessage(message)));
     }
 
     public int run(int desiredPort) {
