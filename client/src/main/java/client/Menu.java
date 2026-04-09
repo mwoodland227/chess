@@ -364,7 +364,6 @@ public class Menu {
         }
         try{
             ws.leave(authToken, currentGameID);
-            ws = null;
             currentGameID = null;
             currentGame = null;
             observing = false;
